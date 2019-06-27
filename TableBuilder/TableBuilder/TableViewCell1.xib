@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="147" id="KGk-i7-Jjw" customClass="TableViewCell1">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="147"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="146.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="标题2" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tOD-k1-OZq">
+                        <rect key="frame" x="50" y="48" width="220" height="47"/>
+                        <color key="backgroundColor" red="0.93725490570000003" green="0.93725490570000003" blue="0.95686274770000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="标题3" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ppU-V2-OYG">
+                        <rect key="frame" x="50" y="105" width="220" height="21.5"/>
+                        <color key="backgroundColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                        <color key="textColor" red="1" green="0.72549019609999998" blue="0.28235294119999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="标题1" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cKr-FA-gcV">
+                        <rect key="frame" x="50" y="20" width="220" height="18"/>
+                        <color key="backgroundColor" red="0.89019607840000003" green="0.89411764709999997" blue="0.8980392157" alpha="1" colorSpace="calibratedRGB"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="ppU-V2-OYG" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="50" id="0Aw-cm-EGE"/>
+                    <constraint firstItem="ppU-V2-OYG" firstAttribute="top" secondItem="tOD-k1-OZq" secondAttribute="bottom" constant="10" id="0LM-ey-krX"/>
+                    <constraint firstAttribute="bottom" secondItem="ppU-V2-OYG" secondAttribute="bottom" constant="20" id="7NU-Cg-e1G"/>
+                    <constraint firstItem="cKr-FA-gcV" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="20" id="IXA-Pc-Rh4"/>
+                    <constraint firstItem="tOD-k1-OZq" firstAttribute="top" secondItem="cKr-FA-gcV" secondAttribute="bottom" constant="10" id="KgO-qP-D26"/>
+                    <constraint firstAttribute="trailing" secondItem="tOD-k1-OZq" secondAttribute="trailing" constant="50" id="OZp-q7-kKS"/>
+                    <constraint firstItem="tOD-k1-OZq" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="50" id="Vuh-Zt-Pqa"/>
+                    <constraint firstAttribute="trailing" secondItem="ppU-V2-OYG" secondAttribute="trailing" constant="50" id="Y3x-5D-1gO"/>
+                    <constraint firstItem="cKr-FA-gcV" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="50" id="dB4-g5-Pn0"/>
+                    <constraint firstAttribute="trailing" secondItem="cKr-FA-gcV" secondAttribute="trailing" constant="50" id="ewS-DP-isI"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="lbl0" destination="cKr-FA-gcV" id="rty-nz-cXN"/>
+                <outlet property="lbl1" destination="tOD-k1-OZq" id="8Oz-aN-psS"/>
+                <outlet property="lbl2" destination="ppU-V2-OYG" id="sap-A1-OeV"/>
+            </connections>
+            <point key="canvasLocation" x="34.782608695652179" y="68.638392857142847"/>
+        </tableViewCell>
+    </objects>
+</document>
