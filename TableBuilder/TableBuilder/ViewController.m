@@ -94,6 +94,7 @@
     model.tb_eleUseXib = YES;
     if ([model isKindOfClass:TableViewCellModel0.class]) {
         model.tb_eleClass = TableViewCell0.class;
+        model.tb_eleDoNotCacheHeight = YES;
     }
     if ([model isKindOfClass:TableViewCellModel1.class]) {
         model.tb_eleClass = TableViewCell1.class;

@@ -133,4 +133,26 @@
     return wrapper.data;
 }
 
+- (void)setTb_eleDoNotCacheHeight:(BOOL)tb_eleDoNotCacheHeight
+{
+    objc_setAssociatedObject(self, @selector(tb_eleDoNotCacheHeight), @(tb_eleDoNotCacheHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)tb_eleDoNotCacheHeight
+{
+    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
+    return obj.boolValue;
+}
+
+- (void)setTb_eleRefreshHeightCache:(BOOL)tb_eleRefreshHeightCache
+{
+    objc_setAssociatedObject(self, @selector(tb_eleRefreshHeightCache), @(tb_eleRefreshHeightCache), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)tb_eleRefreshHeightCache
+{
+    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
+    return obj.boolValue;
+}
+
 @end

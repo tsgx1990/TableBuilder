@@ -129,8 +129,14 @@
         return 0;
     }
     
-    // 注册element复用标识，返回的element可以用于后续的高度计算
+    // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
+    
+    // 处理不需要缓存高度的情况
+    if (model.tb_eleDoNotCacheHeight) {
+        CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
+        return eleHeight;
+    }
     
     // 先尝试从 model 中获取 element 的高度
     NSString *eleHeightKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
@@ -140,16 +146,30 @@
     NSArray *arr = objc_getAssociatedObject(model, eleHeightKey);
     NSNumber *storeTableWidth = arr.firstObject;
     NSNumber *storeEleHeight = arr.lastObject;
-    if (storeTableWidth && storeEleHeight && storeTableWidth.floatValue == tableView.frame.size.width) {
+    
+    // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
+    if (model.tb_eleRefreshHeightCache) {
+        model.tb_eleRefreshHeightCache = NO;
+    }
+    else if (storeTableWidth
+             && storeEleHeight
+             && storeTableWidth.floatValue == tableView.frame.size.width)
+    {
         return storeEleHeight.floatValue;
     }
     
-    // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
-    elementForCal = [self elementWithModel:model initialElement:elementForCal inTableView:tableView];
-    [TBTableViewElementHelper setIsHeightCal:YES forElement:elementForCal];
-    CGFloat eleHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
+    CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
     arr = @[@(tableView.frame.size.width), @(eleHeight)];
     objc_setAssociatedObject(model, eleHeightKey, arr, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return eleHeight;
+}
+
+- (CGFloat)calHeightWithElement:(UIView<TBTableViewElement> *)element andModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
+    UIView<TBTableViewElement> * elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
+    [TBTableViewElementHelper setIsHeightCal:YES forElement:elementForCal];
+    CGFloat eleHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
     return eleHeight;
 }
 

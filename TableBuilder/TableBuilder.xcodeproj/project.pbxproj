@@ -196,18 +196,18 @@
 		E7AFAE0822C463C200852A61 /* TableBuilder */ = {
 			isa = PBXGroup;
 			children = (
+				E7AFAE0922C463C200852A61 /* AppDelegate.h */,
+				E7AFAE0A22C463C200852A61 /* AppDelegate.m */,
+				E7AFAE1222C463C400852A61 /* Assets.xcassets */,
+				E7AFAE1722C463C400852A61 /* Info.plist */,
+				E7AFAE1422C463C400852A61 /* LaunchScreen.storyboard */,
+				E7AFAE1822C463C400852A61 /* main.m */,
+				E7AFAE0F22C463C200852A61 /* Main.storyboard */,
 				E7217CBD22C5EB49009AA857 /* model */,
 				E7217CBA22C5EB49009AA857 /* setter */,
 				E7217CC622C5EB49009AA857 /* view */,
-				E7AFAE0922C463C200852A61 /* AppDelegate.h */,
-				E7AFAE0A22C463C200852A61 /* AppDelegate.m */,
 				E7AFAE0C22C463C200852A61 /* ViewController.h */,
 				E7AFAE0D22C463C200852A61 /* ViewController.m */,
-				E7AFAE0F22C463C200852A61 /* Main.storyboard */,
-				E7AFAE1222C463C400852A61 /* Assets.xcassets */,
-				E7AFAE1422C463C400852A61 /* LaunchScreen.storyboard */,
-				E7AFAE1722C463C400852A61 /* Info.plist */,
-				E7AFAE1822C463C400852A61 /* main.m */,
 			);
 			path = TableBuilder;
 			sourceTree = "<group>";

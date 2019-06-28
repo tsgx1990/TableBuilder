@@ -29,4 +29,12 @@
 @property (nonatomic, strong) id<TBElementModelSetter> tb_eleSetter;
 @property (nonatomic, weak) id<TBElementModelSetter> tb_eleWeakSetter;
 
+// 是否使用高度缓存。默认为 NO，即始终进行高度缓存
+@property (nonatomic, assign) BOOL tb_eleDoNotCacheHeight;
+
+// 标记是否在下次 element 刷新的时候更新高度缓存
+// 如果为YES，则在 element 下次刷新的时候会重新计算高度来刷新缓存，然后自动变为NO；
+// 如果为NO，则 element 直接使用高度缓存。
+@property (nonatomic, assign) BOOL tb_eleRefreshHeightCache;
+
 @end
