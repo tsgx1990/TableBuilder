@@ -121,7 +121,7 @@
 - (void)didSelectCell:(UITableViewCell *)cell withModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSLog(@"aaa");
+    NSLog(@"aaa: %@", indexPath);
 }
 
 @end
