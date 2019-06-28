@@ -7,6 +7,14 @@
 //
 
 #import "TableViewHead0.h"
+#import "TableViewHeadModel0.h"
+
+@interface TableViewHead0 ()
+
+@property (weak, nonatomic) IBOutlet UILabel *leftLbl;
+@property (weak, nonatomic) IBOutlet UILabel *rightLbl;
+
+@end
 
 @implementation TableViewHead0
 
@@ -17,5 +25,11 @@
     // Drawing code
 }
 */
+
+- (void)tb_syncSetModel:(TableViewHeadModel0 *)model
+{
+    self.leftLbl.text = model.leftTitle;
+    self.rightLbl.text = model.rightTitle;
+}
 
 @end

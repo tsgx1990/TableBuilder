@@ -18,6 +18,7 @@
 // 如果不指定，默认为 NSStringFromClass(self.tb_eleClass)
 @property (nonatomic, copy) NSString *tb_eleReuseID;
 
+// 默认为NO，如果指定为YES，需要存在和 tb_eleClass 同名的xib文件
 @property (nonatomic, assign) BOOL tb_eleUseXib;
 
 @property (nonatomic, strong) id tb_eleDelegate;

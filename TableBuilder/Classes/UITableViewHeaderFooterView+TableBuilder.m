@@ -8,6 +8,13 @@
 
 #import "UITableViewHeaderFooterView+TableBuilder.h"
 
+@interface UITableViewHeaderFooterView ()
+
+// 解决xib无法直接创建 UITableViewHeaderFooterView 的问题
+@property (strong, nonatomic) IBOutlet UIView *contentView;
+
+@end
+
 @implementation UITableViewHeaderFooterView (TableBuilder)
 
 - (BOOL)tb_forHeightCalculate

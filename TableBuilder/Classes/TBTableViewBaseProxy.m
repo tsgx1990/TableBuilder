@@ -89,11 +89,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if ([self.delegate respondsToSelector:@selector(proxy:didSelectRowWithModel:)]) {
-        [self.delegate proxy:self didSelectRowWithModel:cell.tb_model];
+    if ([self.delegate respondsToSelector:@selector(proxy:didSelectRowWithModel:atIndexPath:)]) {
+        [self.delegate proxy:self didSelectRowWithModel:cell.tb_model atIndexPath:indexPath];
     }
-    if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:)]) {
-        [cell.tb_delegate didSelectCell:cell withModel:cell.tb_model];
+    if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
+        [cell.tb_delegate didSelectCell:cell withModel:cell.tb_model atIndexPath:indexPath];
     }
 }
 
@@ -136,6 +136,7 @@
     NSString *cellHeightKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
     SEL cellHeightKey = NSSelectorFromString(cellHeightKeyStr);
     
+    // 当tableView宽度改变的时候，cell的高度需要重新计算
     NSArray *arr = objc_getAssociatedObject(model, cellHeightKey);
     NSNumber *storeTableWidth = arr.firstObject;
     NSNumber *storeCellHeight = arr.lastObject;

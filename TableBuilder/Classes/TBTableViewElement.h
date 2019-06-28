@@ -6,7 +6,7 @@
 //  Copyright © 2019 guanglong. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 @protocol TBTableViewElement <NSObject>
 

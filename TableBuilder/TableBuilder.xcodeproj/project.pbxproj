@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E7217CD322C5EB49009AA857 /* TableViewHeadSetter1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CBC22C5EB49009AA857 /* TableViewHeadSetter1.m */; };
+		E7217CD422C5EB49009AA857 /* TableViewCellModel1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CBE22C5EB49009AA857 /* TableViewCellModel1.m */; };
+		E7217CD522C5EB49009AA857 /* TableViewHeadModel0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CC122C5EB49009AA857 /* TableViewHeadModel0.m */; };
+		E7217CD622C5EB49009AA857 /* TableViewHeadModel1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CC222C5EB49009AA857 /* TableViewHeadModel1.m */; };
+		E7217CD722C5EB49009AA857 /* TableViewCellModel0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CC522C5EB49009AA857 /* TableViewCellModel0.m */; };
+		E7217CD822C5EB49009AA857 /* TableViewHead1.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7217CC722C5EB49009AA857 /* TableViewHead1.xib */; };
+		E7217CD922C5EB49009AA857 /* TableViewHead0.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7217CC822C5EB49009AA857 /* TableViewHead0.xib */; };
+		E7217CDA22C5EB49009AA857 /* TableViewCell0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CC922C5EB49009AA857 /* TableViewCell0.m */; };
+		E7217CDB22C5EB49009AA857 /* TableViewHead1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CCA22C5EB49009AA857 /* TableViewHead1.m */; };
+		E7217CDC22C5EB49009AA857 /* TableViewCell1.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7217CCC22C5EB49009AA857 /* TableViewCell1.xib */; };
+		E7217CDD22C5EB49009AA857 /* TableViewCell0.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7217CCD22C5EB49009AA857 /* TableViewCell0.xib */; };
+		E7217CDE22C5EB49009AA857 /* TableViewCell1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CD122C5EB49009AA857 /* TableViewCell1.m */; };
+		E7217CDF22C5EB49009AA857 /* TableViewHead0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CD222C5EB49009AA857 /* TableViewHead0.m */; };
 		E7AFAE0B22C463C200852A61 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE0A22C463C200852A61 /* AppDelegate.m */; };
 		E7AFAE0E22C463C200852A61 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE0D22C463C200852A61 /* ViewController.m */; };
 		E7AFAE1122C463C200852A61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7AFAE0F22C463C200852A61 /* Main.storyboard */; };
@@ -20,14 +33,6 @@
 		E7AFAE4722C48BF800852A61 /* UITableViewCell+TableBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4622C48BF800852A61 /* UITableViewCell+TableBuilder.m */; };
 		E7AFAE4A22C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4922C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m */; };
 		E7AFAE4E22C4946C00852A61 /* TBTableViewElementHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4D22C4946C00852A61 /* TBTableViewElementHelper.m */; };
-		E7AFAE5322C4DE7900852A61 /* TableViewCell0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE5122C4DE7900852A61 /* TableViewCell0.m */; };
-		E7AFAE5422C4DE7900852A61 /* TableViewCell0.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7AFAE5222C4DE7900852A61 /* TableViewCell0.xib */; };
-		E7AFAE5822C4DE8C00852A61 /* TableViewCell1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE5622C4DE8C00852A61 /* TableViewCell1.m */; };
-		E7AFAE5922C4DE8C00852A61 /* TableViewCell1.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7AFAE5722C4DE8C00852A61 /* TableViewCell1.xib */; };
-		E7AFAE5C22C4DEB600852A61 /* TableViewHead0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE5B22C4DEB600852A61 /* TableViewHead0.m */; };
-		E7AFAE5F22C4DEC600852A61 /* TableViewHead1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE5E22C4DEC600852A61 /* TableViewHead1.m */; };
-		E7AFAE6222C4E09600852A61 /* TableViewCellModel0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE6122C4E09600852A61 /* TableViewCellModel0.m */; };
-		E7AFAE6522C4F31C00852A61 /* TableViewCellModel1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE6422C4F31C00852A61 /* TableViewCellModel1.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +53,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E7217CBB22C5EB49009AA857 /* TableViewHeadSetter1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHeadSetter1.h; sourceTree = "<group>"; };
+		E7217CBC22C5EB49009AA857 /* TableViewHeadSetter1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHeadSetter1.m; sourceTree = "<group>"; };
+		E7217CBE22C5EB49009AA857 /* TableViewCellModel1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCellModel1.m; sourceTree = "<group>"; };
+		E7217CBF22C5EB49009AA857 /* TableViewHeadModel1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHeadModel1.h; sourceTree = "<group>"; };
+		E7217CC022C5EB49009AA857 /* TableViewCellModel0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCellModel0.h; sourceTree = "<group>"; };
+		E7217CC122C5EB49009AA857 /* TableViewHeadModel0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHeadModel0.m; sourceTree = "<group>"; };
+		E7217CC222C5EB49009AA857 /* TableViewHeadModel1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHeadModel1.m; sourceTree = "<group>"; };
+		E7217CC322C5EB49009AA857 /* TableViewCellModel1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCellModel1.h; sourceTree = "<group>"; };
+		E7217CC422C5EB49009AA857 /* TableViewHeadModel0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHeadModel0.h; sourceTree = "<group>"; };
+		E7217CC522C5EB49009AA857 /* TableViewCellModel0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCellModel0.m; sourceTree = "<group>"; };
+		E7217CC722C5EB49009AA857 /* TableViewHead1.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewHead1.xib; sourceTree = "<group>"; };
+		E7217CC822C5EB49009AA857 /* TableViewHead0.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewHead0.xib; sourceTree = "<group>"; };
+		E7217CC922C5EB49009AA857 /* TableViewCell0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell0.m; sourceTree = "<group>"; };
+		E7217CCA22C5EB49009AA857 /* TableViewHead1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHead1.m; sourceTree = "<group>"; };
+		E7217CCB22C5EB49009AA857 /* TableViewCell1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCell1.h; sourceTree = "<group>"; };
+		E7217CCC22C5EB49009AA857 /* TableViewCell1.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCell1.xib; sourceTree = "<group>"; };
+		E7217CCD22C5EB49009AA857 /* TableViewCell0.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TableViewCell0.xib; sourceTree = "<group>"; };
+		E7217CCE22C5EB49009AA857 /* TableViewHead0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHead0.h; sourceTree = "<group>"; };
+		E7217CCF22C5EB49009AA857 /* TableViewCell0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewCell0.h; sourceTree = "<group>"; };
+		E7217CD022C5EB49009AA857 /* TableViewHead1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHead1.h; sourceTree = "<group>"; };
+		E7217CD122C5EB49009AA857 /* TableViewCell1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell1.m; sourceTree = "<group>"; };
+		E7217CD222C5EB49009AA857 /* TableViewHead0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHead0.m; sourceTree = "<group>"; };
 		E7AFAE0622C463C200852A61 /* TableBuilder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableBuilder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7AFAE0922C463C200852A61 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7AFAE0A22C463C200852A61 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -75,20 +102,6 @@
 		E7AFAE4C22C4946C00852A61 /* TBTableViewElementHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTableViewElementHelper.h; sourceTree = "<group>"; };
 		E7AFAE4D22C4946C00852A61 /* TBTableViewElementHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBTableViewElementHelper.m; sourceTree = "<group>"; };
 		E7AFAE4F22C4C16300852A61 /* TBTableViewElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTableViewElement.h; sourceTree = "<group>"; };
-		E7AFAE5022C4DE7900852A61 /* TableViewCell0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell0.h; sourceTree = "<group>"; };
-		E7AFAE5122C4DE7900852A61 /* TableViewCell0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCell0.m; sourceTree = "<group>"; };
-		E7AFAE5222C4DE7900852A61 /* TableViewCell0.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell0.xib; sourceTree = "<group>"; };
-		E7AFAE5522C4DE8C00852A61 /* TableViewCell1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCell1.h; sourceTree = "<group>"; };
-		E7AFAE5622C4DE8C00852A61 /* TableViewCell1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCell1.m; sourceTree = "<group>"; };
-		E7AFAE5722C4DE8C00852A61 /* TableViewCell1.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewCell1.xib; sourceTree = "<group>"; };
-		E7AFAE5A22C4DEB600852A61 /* TableViewHead0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewHead0.h; sourceTree = "<group>"; };
-		E7AFAE5B22C4DEB600852A61 /* TableViewHead0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewHead0.m; sourceTree = "<group>"; };
-		E7AFAE5D22C4DEC600852A61 /* TableViewHead1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewHead1.h; sourceTree = "<group>"; };
-		E7AFAE5E22C4DEC600852A61 /* TableViewHead1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewHead1.m; sourceTree = "<group>"; };
-		E7AFAE6022C4E09600852A61 /* TableViewCellModel0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCellModel0.h; sourceTree = "<group>"; };
-		E7AFAE6122C4E09600852A61 /* TableViewCellModel0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellModel0.m; sourceTree = "<group>"; };
-		E7AFAE6322C4F31C00852A61 /* TableViewCellModel1.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewCellModel1.h; sourceTree = "<group>"; };
-		E7AFAE6422C4F31C00852A61 /* TableViewCellModel1.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewCellModel1.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +129,49 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E7217CBA22C5EB49009AA857 /* setter */ = {
+			isa = PBXGroup;
+			children = (
+				E7217CBB22C5EB49009AA857 /* TableViewHeadSetter1.h */,
+				E7217CBC22C5EB49009AA857 /* TableViewHeadSetter1.m */,
+			);
+			path = setter;
+			sourceTree = "<group>";
+		};
+		E7217CBD22C5EB49009AA857 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				E7217CC022C5EB49009AA857 /* TableViewCellModel0.h */,
+				E7217CC522C5EB49009AA857 /* TableViewCellModel0.m */,
+				E7217CC322C5EB49009AA857 /* TableViewCellModel1.h */,
+				E7217CBE22C5EB49009AA857 /* TableViewCellModel1.m */,
+				E7217CC422C5EB49009AA857 /* TableViewHeadModel0.h */,
+				E7217CC122C5EB49009AA857 /* TableViewHeadModel0.m */,
+				E7217CBF22C5EB49009AA857 /* TableViewHeadModel1.h */,
+				E7217CC222C5EB49009AA857 /* TableViewHeadModel1.m */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		E7217CC622C5EB49009AA857 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				E7217CCF22C5EB49009AA857 /* TableViewCell0.h */,
+				E7217CC922C5EB49009AA857 /* TableViewCell0.m */,
+				E7217CCD22C5EB49009AA857 /* TableViewCell0.xib */,
+				E7217CCB22C5EB49009AA857 /* TableViewCell1.h */,
+				E7217CD122C5EB49009AA857 /* TableViewCell1.m */,
+				E7217CCC22C5EB49009AA857 /* TableViewCell1.xib */,
+				E7217CCE22C5EB49009AA857 /* TableViewHead0.h */,
+				E7217CD222C5EB49009AA857 /* TableViewHead0.m */,
+				E7217CC822C5EB49009AA857 /* TableViewHead0.xib */,
+				E7217CD022C5EB49009AA857 /* TableViewHead1.h */,
+				E7217CCA22C5EB49009AA857 /* TableViewHead1.m */,
+				E7217CC722C5EB49009AA857 /* TableViewHead1.xib */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
 		E7AFADFD22C463C200852A61 = {
 			isa = PBXGroup;
 			children = (
@@ -140,22 +196,11 @@
 		E7AFAE0822C463C200852A61 /* TableBuilder */ = {
 			isa = PBXGroup;
 			children = (
+				E7217CBD22C5EB49009AA857 /* model */,
+				E7217CBA22C5EB49009AA857 /* setter */,
+				E7217CC622C5EB49009AA857 /* view */,
 				E7AFAE0922C463C200852A61 /* AppDelegate.h */,
 				E7AFAE0A22C463C200852A61 /* AppDelegate.m */,
-				E7AFAE6022C4E09600852A61 /* TableViewCellModel0.h */,
-				E7AFAE6122C4E09600852A61 /* TableViewCellModel0.m */,
-				E7AFAE5022C4DE7900852A61 /* TableViewCell0.h */,
-				E7AFAE5122C4DE7900852A61 /* TableViewCell0.m */,
-				E7AFAE5222C4DE7900852A61 /* TableViewCell0.xib */,
-				E7AFAE6322C4F31C00852A61 /* TableViewCellModel1.h */,
-				E7AFAE6422C4F31C00852A61 /* TableViewCellModel1.m */,
-				E7AFAE5522C4DE8C00852A61 /* TableViewCell1.h */,
-				E7AFAE5622C4DE8C00852A61 /* TableViewCell1.m */,
-				E7AFAE5722C4DE8C00852A61 /* TableViewCell1.xib */,
-				E7AFAE5A22C4DEB600852A61 /* TableViewHead0.h */,
-				E7AFAE5B22C4DEB600852A61 /* TableViewHead0.m */,
-				E7AFAE5D22C4DEC600852A61 /* TableViewHead1.h */,
-				E7AFAE5E22C4DEC600852A61 /* TableViewHead1.m */,
 				E7AFAE0C22C463C200852A61 /* ViewController.h */,
 				E7AFAE0D22C463C200852A61 /* ViewController.m */,
 				E7AFAE0F22C463C200852A61 /* Main.storyboard */,
@@ -306,11 +351,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7AFAE5922C4DE8C00852A61 /* TableViewCell1.xib in Resources */,
 				E7AFAE1622C463C400852A61 /* LaunchScreen.storyboard in Resources */,
+				E7217CDD22C5EB49009AA857 /* TableViewCell0.xib in Resources */,
+				E7217CD822C5EB49009AA857 /* TableViewHead1.xib in Resources */,
+				E7217CD922C5EB49009AA857 /* TableViewHead0.xib in Resources */,
 				E7AFAE1322C463C400852A61 /* Assets.xcassets in Resources */,
-				E7AFAE5422C4DE7900852A61 /* TableViewCell0.xib in Resources */,
 				E7AFAE1122C463C200852A61 /* Main.storyboard in Resources */,
+				E7217CDC22C5EB49009AA857 /* TableViewCell1.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -335,20 +382,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E7AFAE6222C4E09600852A61 /* TableViewCellModel0.m in Sources */,
+				E7217CD722C5EB49009AA857 /* TableViewCellModel0.m in Sources */,
 				E7AFAE4E22C4946C00852A61 /* TBTableViewElementHelper.m in Sources */,
-				E7AFAE5F22C4DEC600852A61 /* TableViewHead1.m in Sources */,
+				E7217CD422C5EB49009AA857 /* TableViewCellModel1.m in Sources */,
+				E7217CD522C5EB49009AA857 /* TableViewHeadModel0.m in Sources */,
+				E7217CDB22C5EB49009AA857 /* TableViewHead1.m in Sources */,
+				E7217CDF22C5EB49009AA857 /* TableViewHead0.m in Sources */,
 				E7AFAE4722C48BF800852A61 /* UITableViewCell+TableBuilder.m in Sources */,
 				E7AFAE4122C46D3000852A61 /* TBTableViewBaseProxy.m in Sources */,
-				E7AFAE5C22C4DEB600852A61 /* TableViewHead0.m in Sources */,
 				E7AFAE0E22C463C200852A61 /* ViewController.m in Sources */,
-				E7AFAE6522C4F31C00852A61 /* TableViewCellModel1.m in Sources */,
 				E7AFAE1922C463C400852A61 /* main.m in Sources */,
 				E7AFAE0B22C463C200852A61 /* AppDelegate.m in Sources */,
 				E7AFAE3E22C4677400852A61 /* NSObject+TBElementModel.m in Sources */,
-				E7AFAE5822C4DE8C00852A61 /* TableViewCell1.m in Sources */,
-				E7AFAE5322C4DE7900852A61 /* TableViewCell0.m in Sources */,
 				E7AFAE4A22C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m in Sources */,
+				E7217CD322C5EB49009AA857 /* TableViewHeadSetter1.m in Sources */,
+				E7217CDA22C5EB49009AA857 /* TableViewCell0.m in Sources */,
+				E7217CD622C5EB49009AA857 /* TableViewHeadModel1.m in Sources */,
+				E7217CDE22C5EB49009AA857 /* TableViewCell1.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -12,7 +12,7 @@
 @protocol TBTableViewCellDelegate <NSObject>
 
 @optional
-- (void)didSelectCell:(UITableViewCell *)cell withModel:(NSObject *)model;
+- (void)didSelectCell:(UITableViewCell *)cell withModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath;
 
 @end
 

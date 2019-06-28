@@ -6,12 +6,9 @@
 //  Copyright © 2019 guanglong. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
-
-NS_ASSUME_NONNULL_BEGIN
+#import "UITableViewHeaderFooterView+TableBuilder.h"
 
 @interface TableViewHead0 : UITableViewHeaderFooterView
 
 @end
 
-NS_ASSUME_NONNULL_END
