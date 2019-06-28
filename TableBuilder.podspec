@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |spec|
 
-  spec.name         = "TableBuilder"
+  spec.name         = "GLTableBuilder"
   spec.version      = "0.0.1"
   spec.summary      = "Build tableView quickly and easily"
   spec.description  = <<-DESC
