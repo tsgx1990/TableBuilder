@@ -123,9 +123,9 @@
 
 - (CGFloat)heightWithModel:(NSObject *)model inTableView:(UITableView *)tableView
 {
-    Class cellClass = model.tb_eleClass;
+    Class eleClass = model.tb_eleClass;
     NSString *reuseID = model.tb_eleReuseID;
-    if (!cellClass || !reuseID) {
+    if (!eleClass || !reuseID) {
         return 0;
     }
     
@@ -133,24 +133,24 @@
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
     
     // 先尝试从 model 中获取 element 的高度
-    NSString *cellHeightKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
-    SEL cellHeightKey = NSSelectorFromString(cellHeightKeyStr);
+    NSString *eleHeightKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
+    SEL eleHeightKey = NSSelectorFromString(eleHeightKeyStr);
     
-    // 当tableView宽度改变的时候，cell的高度需要重新计算
-    NSArray *arr = objc_getAssociatedObject(model, cellHeightKey);
+    // 当tableView宽度改变的时候，element 的高度需要重新计算
+    NSArray *arr = objc_getAssociatedObject(model, eleHeightKey);
     NSNumber *storeTableWidth = arr.firstObject;
-    NSNumber *storeCellHeight = arr.lastObject;
-    if (storeTableWidth && storeCellHeight && storeTableWidth.floatValue == tableView.frame.size.width) {
-        return storeCellHeight.floatValue;
+    NSNumber *storeEleHeight = arr.lastObject;
+    if (storeTableWidth && storeEleHeight && storeTableWidth.floatValue == tableView.frame.size.width) {
+        return storeEleHeight.floatValue;
     }
     
-    // 创建用于计算高度的 element
+    // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
     elementForCal = [self elementWithModel:model initialElement:elementForCal inTableView:tableView];
     [TBTableViewElementHelper setIsHeightCal:YES forElement:elementForCal];
-    CGFloat cellHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
-    arr = @[@(tableView.frame.size.width), @(cellHeight)];
-    objc_setAssociatedObject(model, cellHeightKey, arr, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    return cellHeight;
+    CGFloat eleHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
+    arr = @[@(tableView.frame.size.width), @(eleHeight)];
+    objc_setAssociatedObject(model, eleHeightKey, arr, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return eleHeight;
 }
 
 - (UIView<TBTableViewElement> *)registerElementWithModel:(NSObject *)model inTableView:(UITableView *)tableView
@@ -158,12 +158,12 @@
     Class eleClass = model.tb_eleClass;
     NSString *reuseID = model.tb_eleReuseID;
     
-    static void *cellRegister = &cellRegister;
-    // register cellClass or cellNib
-    NSMutableSet *reuseIDStore = objc_getAssociatedObject(tableView, cellRegister);
+    static void *elementRegister = &elementRegister;
+    // register elementClass or elementNib
+    NSMutableSet *reuseIDStore = objc_getAssociatedObject(tableView, elementRegister);
     if (!reuseIDStore) {
         reuseIDStore = [NSMutableSet setWithCapacity:3];
-        objc_setAssociatedObject(tableView, cellRegister, reuseIDStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(tableView, elementRegister, reuseIDStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     // 如果已经注册过，不再重复注册
     if ([reuseIDStore containsObject:reuseID]) {
@@ -206,14 +206,14 @@
     Class eleClass = model.tb_eleClass;
     NSString *reuseID = model.tb_eleReuseID;
     
-    static void *cellCalculator = &cellCalculator;
-    NSMutableDictionary *calCellStore = objc_getAssociatedObject(tableView, cellCalculator);
-    if (!calCellStore) {
-        calCellStore = [NSMutableDictionary dictionaryWithCapacity:3];
-        objc_setAssociatedObject(tableView, cellCalculator, calCellStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    static void *elementCalculator = &elementCalculator;
+    NSMutableDictionary *calEleStore = objc_getAssociatedObject(tableView, elementCalculator);
+    if (!calEleStore) {
+        calEleStore = [NSMutableDictionary dictionaryWithCapacity:3];
+        objc_setAssociatedObject(tableView, elementCalculator, calEleStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     
-    NSArray *arr = [calCellStore valueForKey:reuseID];
+    NSArray *arr = [calEleStore valueForKey:reuseID];
     NSNumber *storeTableWidth = arr.firstObject;
     UIView<TBTableViewElement> *element = arr.lastObject;
     
@@ -237,10 +237,10 @@
                 element = [eleClass.alloc initWithReuseIdentifier:reuseID];
             }
         }
-        // 在计算完cell的高度之后，最后一次性全部移除这些用于计算高度的cell，防止不必要的内存占用
-        if (!calCellStore.count) {
+        // 在计算完 element 的高度之后，最后一次性全部移除这些用于计算高度的 element，防止不必要的内存占用
+        if (!calEleStore.count) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [calCellStore removeAllObjects];
+                [calEleStore removeAllObjects];
             });
         }
     }
@@ -265,7 +265,7 @@
     
     if (shouldUpdate) {
         arr = @[@(tableView.frame.size.width), element];
-        [calCellStore setValue:arr forKey:reuseID];
+        [calEleStore setValue:arr forKey:reuseID];
     }
     return element;
 }
