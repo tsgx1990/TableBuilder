@@ -25,6 +25,13 @@
     return [TBTableViewElementHelper delegateForElement:self];
 }
 
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    if ([self.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
+        [self.tb_delegate didSelectCell:self withModel:self.tb_model atIndexPath:indexPath];
+    }
+}
+
 - (void)tb_syncSetModel:(NSObject *)model
 {
     NSAssert(0, @"Subclass should override this method!");

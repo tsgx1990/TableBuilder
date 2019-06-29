@@ -92,9 +92,10 @@
     if ([self.delegate respondsToSelector:@selector(proxy:didSelectRowWithModel:atIndexPath:)]) {
         [self.delegate proxy:self didSelectRowWithModel:cell.tb_model atIndexPath:indexPath];
     }
-    if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
-        [cell.tb_delegate didSelectCell:cell withModel:cell.tb_model atIndexPath:indexPath];
-    }
+//    if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
+//        [cell.tb_delegate didSelectCell:cell withModel:cell.tb_model atIndexPath:indexPath];
+//    }
+    [cell didSelectCellAtIndexPath:indexPath];
 }
 
 #pragma mark - - UITableViewDataSource
