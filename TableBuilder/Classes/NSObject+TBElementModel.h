@@ -37,4 +37,8 @@
 // 如果为NO，则 element 直接使用高度缓存。
 @property (nonatomic, assign) BOOL tb_eleRefreshHeightCache;
 
+// 是否同步更新 element。
+// 默认为NO，即异步更新（当element比较复杂时，异步更新可以避免列表卡顿）
+@property (nonatomic, assign) BOOL tb_eleSetSync;
+
 @end

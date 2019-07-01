@@ -155,4 +155,15 @@
     return obj.boolValue;
 }
 
+- (void)setTb_eleSetSync:(BOOL)tb_eleSetSync
+{
+    objc_setAssociatedObject(self, @selector(tb_eleSetSync), @(tb_eleSetSync), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)tb_eleSetSync
+{
+    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
+    return obj.boolValue;
+}
+
 @end

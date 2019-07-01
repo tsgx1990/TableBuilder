@@ -53,6 +53,11 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     if (element.tb_forHeightCalculate) {
         return;
     }
+    if (model.tb_eleSetSync) {
+        [self syncSetModel:model forElement:element];
+        [element setNeedsLayout];
+        return;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         if (model == element.tb_model) {
             [self syncSetModel:model forElement:element];
