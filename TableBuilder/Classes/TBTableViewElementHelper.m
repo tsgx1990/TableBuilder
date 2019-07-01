@@ -34,7 +34,7 @@
     if (cellHeight < 0.6) {
         [element setNeedsLayout];
         [element layoutIfNeeded];
-        cellHeight = [element tb_elementHeightWithModel:model];
+        cellHeight = [element tb_elementHeightForModel:model];
     }
     return cellHeight + 0.5;
 }

@@ -20,7 +20,7 @@
 
 @optional
 // you should override this method if you don't use autolayout
-- (CGFloat)tb_elementHeightWithModel:(NSObject *)model;
+- (CGFloat)tb_elementHeightForModel:(NSObject *)model;
 
 @end
 
