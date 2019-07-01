@@ -18,8 +18,7 @@ Pod::Spec.new do |spec|
   spec.license      = { :type => "Apache License, Version 2.0", :file => "LICENSE" }
   spec.author       = { "dabao" => "dabaotthao@163.com" }
   spec.platform     = :ios, "8.0"
-  # spec.source       = { :git => "https://github.com/tsgx1990/TableBuilder.git", :tag => "#{spec.version}" }
-  spec.source       = { :git => "https://github.com/tsgx1990/TableBuilder.git", :tag => "0.0.1" }
+  spec.source       = { :git => "https://github.com/tsgx1990/TableBuilder.git", :tag => "#{spec.version}" }
   spec.source_files  = "TableBuilder/Classes/**/*.{h,m}"
   spec.requires_arc = true
 
