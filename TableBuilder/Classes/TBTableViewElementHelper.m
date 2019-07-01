@@ -24,7 +24,8 @@
 
 + (CGFloat)heightWithModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
-    [self syncSetModel:model forElement:element];
+    [self setIsHeightCal:YES forElement:element];
+    [self setModel:model forElement:element];
     CGFloat cellHeight = 0;
     if (element.contentView.constraints.count > 0) {
         CGSize size = [element.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
@@ -33,7 +34,7 @@
     if (cellHeight < 0.6) {
         [element setNeedsLayout];
         [element layoutIfNeeded];
-        cellHeight = [element tb_elementHeight];
+        cellHeight = [element tb_elementHeightWithModel:model];
     }
     return cellHeight + 0.5;
 }
@@ -50,10 +51,7 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    if (element.tb_forHeightCalculate) {
-        return;
-    }
-    if (model.tb_eleSetSync) {
+    if (model.tb_eleSetSync || [self isHeightCalForElement:element]) {
         [self syncSetModel:model forElement:element];
         [element setNeedsLayout];
         return;

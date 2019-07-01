@@ -18,7 +18,4 @@
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element;
 + (NSObject *)modelForElement:(UIView<TBTableViewElement> *)element;
 
-+ (void)setIsHeightCal:(BOOL)heightCal forElement:(UIView<TBTableViewElement> *)element;
-+ (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element;
-
 @end

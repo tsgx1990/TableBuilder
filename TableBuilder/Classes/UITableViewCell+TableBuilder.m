@@ -10,11 +10,6 @@
 
 @implementation UITableViewCell (TableBuilder)
 
-- (BOOL)tb_forHeightCalculate
-{
-    return [TBTableViewElementHelper isHeightCalForElement:self];
-}
-
 - (NSObject *)tb_model
 {
     return [TBTableViewElementHelper modelForElement:self];

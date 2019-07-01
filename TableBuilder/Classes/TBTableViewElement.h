@@ -13,7 +13,6 @@
 @required
 @property (nonatomic, strong) UIView *contentView;
 
-@property (nonatomic, readonly) BOOL tb_forHeightCalculate;
 @property (nonatomic, readonly) NSObject *tb_model;
 @property (nonatomic, readonly) id tb_delegate;
 
@@ -21,7 +20,7 @@
 
 @optional
 // you should override this method if you don't use autolayout
-- (CGFloat)tb_elementHeight;
+- (CGFloat)tb_elementHeightWithModel:(NSObject *)model;
 
 @end
 

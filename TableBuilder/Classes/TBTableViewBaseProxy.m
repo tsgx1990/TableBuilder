@@ -169,7 +169,6 @@
 {
     // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
     UIView<TBTableViewElement> * elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
-    [TBTableViewElementHelper setIsHeightCal:YES forElement:elementForCal];
     CGFloat eleHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
     return eleHeight;
 }
