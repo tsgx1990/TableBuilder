@@ -14,6 +14,10 @@
 
 + (void)syncSetModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
+    // 解决 header 或者 footer 在转屏后的自动布局问题
+    if (!element.contentView.translatesAutoresizingMaskIntoConstraints) {
+        element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
+    }
     if (model.tb_eleSetter) {
         [model.tb_eleSetter setModel:model forElement:element];
     }

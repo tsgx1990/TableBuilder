@@ -12,22 +12,81 @@
 #import "UITableViewCell+TableBuilder.h"
 #import "UITableViewHeaderFooterView+TableBuilder.h"
 
+
 @interface TBTableViewBaseProxy ()
 
 @property (nonatomic, weak) UITableView *tableView;
 
 @end
 
+
+@implementation UITableView (TBProxy)
+
+- (TBTableViewBaseProxy *)tb_setProxyClass:(Class)proxyClass
+{
+    return [self tb_setProxyClass:proxyClass delegate:nil];;
+}
+
+- (TBTableViewBaseProxy *)tb_setProxyDelegate:(id<TBTableViewBaseProxyDelegate>)delegate
+{
+    return [self tb_setProxyClass:TBTableViewBaseProxy.class delegate:delegate];
+}
+
+- (TBTableViewBaseProxy *)tb_setProxyStrongDelegate:(id<TBTableViewBaseProxyDelegate>)strongDelegate
+{
+    return [self tb_setProxyClass:TBTableViewBaseProxy.class strongDelegate:strongDelegate];
+}
+
+- (TBTableViewBaseProxy *)tb_setProxyClass:(Class)proxyClass delegate:(id<TBTableViewBaseProxyDelegate>)delegate
+{
+    assert(!proxyClass || [proxyClass isSubclassOfClass:TBTableViewBaseProxy.class]);
+    TBTableViewBaseProxy *proxy = proxyClass ? [proxyClass alloc] : [TBTableViewBaseProxy alloc];
+    proxy = [proxy initWithTableView:self];
+    proxy.delegate = delegate;
+    self.tb_proxy = proxy;
+    return proxy;
+}
+
+- (TBTableViewBaseProxy *)tb_setProxyClass:(Class)proxyClass strongDelegate:(id<TBTableViewBaseProxyDelegate>)strongDelegate
+{
+    assert(!proxyClass || [proxyClass isSubclassOfClass:TBTableViewBaseProxy.class]);
+    TBTableViewBaseProxy *proxy = proxyClass ? [proxyClass alloc] : [TBTableViewBaseProxy alloc];
+    proxy = [proxy initWithTableView:self];
+    proxy.strongDelegate = strongDelegate;
+    self.tb_proxy = proxy;
+    return proxy;
+}
+
+static void *_tb_tableProxyKey = &_tb_tableProxyKey;
+
+- (void)setTb_proxy:(TBTableViewBaseProxy *)tb_proxy
+{
+    objc_setAssociatedObject(self, _tb_tableProxyKey, tb_proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    tb_proxy.tableView = self;
+    self.delegate = tb_proxy;
+    self.dataSource = tb_proxy;
+    self.rowHeight = 44.0f;
+    self.estimatedRowHeight = 0.0f;
+}
+
+- (TBTableViewBaseProxy *)tb_proxy
+{
+    TBTableViewBaseProxy *proxy = objc_getAssociatedObject(self, _tb_tableProxyKey);
+    if (!proxy) {
+        proxy = [self tb_setProxyClass:TBTableViewBaseProxy.class];
+    }
+    return proxy;
+}
+
+@end
+
+
 @implementation TBTableViewBaseProxy
 
 - (instancetype)initWithTableView:(UITableView *)tableView
 {
     if (self = [self init]) {
-        self.tableView = tableView;
-        tableView.delegate = self;
-        tableView.dataSource = self;
-        tableView.rowHeight = 44.0f;
-        tableView.estimatedRowHeight = 0.0f;
+        tableView.tb_proxy = self;
     }
     return self;
 }
@@ -38,11 +97,19 @@
     return proxy;
 }
 
+- (id<TBTableViewBaseProxyDelegate>)delegate
+{
+    if (!_delegate) {
+        return self.strongDelegate;
+    }
+    return _delegate;
+}
+
 #pragma mark - - UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSObject *model = [self.delegate modelInProxy:self forRowAtIndexPath:indexPath];
+    NSObject *model = [self modelForRowAtIndexPath:indexPath];
     return [self heightWithModel:model inTableView:tableView];
 }
 
@@ -109,18 +176,38 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if ([self.delegate respondsToSelector:@selector(modelArrayInProxy:forSection:)]) {
+        NSArray *arr = [self.delegate modelArrayInProxy:self forSection:section];
+        return arr.count;
+    }
     return [self.delegate proxy:self numberOfRowsInSection:section];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSObject *model = [self.delegate modelInProxy:self forRowAtIndexPath:indexPath];
+    NSObject *model = [self modelForRowAtIndexPath:indexPath];
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:model.tb_eleReuseID];
     [TBTableViewElementHelper setModel:model forElement:cell];
     return cell;
 }
 
 #pragma mark - - private
+
+- (NSObject *)modelForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSObject *model = nil;
+    if ([self.delegate respondsToSelector:@selector(modelArrayInProxy:forSection:)]) {
+        NSArray *arr = [self.delegate modelArrayInProxy:self forSection:indexPath.section];
+        model = arr[indexPath.row];
+    }
+    else {
+        model = [self.delegate modelInProxy:self forRowAtIndexPath:indexPath];
+    }
+    if ([self.delegate respondsToSelector:@selector(proxy:willUseCellModel:)]) {
+        [self.delegate proxy:self willUseCellModel:model];
+    }
+    return model;
+}
 
 - (CGFloat)heightWithModel:(NSObject *)model inTableView:(UITableView *)tableView
 {
@@ -288,6 +375,11 @@
         [calEleStore setValue:arr forKey:reuseID];
     }
     return element;
+}
+
+- (void)dealloc
+{
+    NSLog(@"%s", __func__);
 }
 
 @end

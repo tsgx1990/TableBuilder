@@ -33,6 +33,7 @@
 		E7AFAE4722C48BF800852A61 /* UITableViewCell+TableBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4622C48BF800852A61 /* UITableViewCell+TableBuilder.m */; };
 		E7AFAE4A22C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4922C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m */; };
 		E7AFAE4E22C4946C00852A61 /* TBTableViewElementHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE4D22C4946C00852A61 /* TBTableViewElementHelper.m */; };
+		E7BFF75E22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = E7BFF75D22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,6 +103,8 @@
 		E7AFAE4C22C4946C00852A61 /* TBTableViewElementHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTableViewElementHelper.h; sourceTree = "<group>"; };
 		E7AFAE4D22C4946C00852A61 /* TBTableViewElementHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBTableViewElementHelper.m; sourceTree = "<group>"; };
 		E7AFAE4F22C4C16300852A61 /* TBTableViewElement.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTableViewElement.h; sourceTree = "<group>"; };
+		E7BFF75C22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TBTableViewBaseProxyBlock.h; sourceTree = "<group>"; };
+		E7BFF75D22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TBTableViewBaseProxyBlock.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -244,6 +247,8 @@
 				E7AFAE4922C48FBB00852A61 /* UITableViewHeaderFooterView+TableBuilder.m */,
 				E7AFAE3F22C46D3000852A61 /* TBTableViewBaseProxy.h */,
 				E7AFAE4022C46D3000852A61 /* TBTableViewBaseProxy.m */,
+				E7BFF75C22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.h */,
+				E7BFF75D22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -383,6 +388,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7217CD722C5EB49009AA857 /* TableViewCellModel0.m in Sources */,
+				E7BFF75E22CAFFE000DE1F17 /* TBTableViewBaseProxyBlock.m in Sources */,
 				E7AFAE4E22C4946C00852A61 /* TBTableViewElementHelper.m in Sources */,
 				E7217CD422C5EB49009AA857 /* TableViewCellModel1.m in Sources */,
 				E7217CD522C5EB49009AA857 /* TableViewHeadModel0.m in Sources */,

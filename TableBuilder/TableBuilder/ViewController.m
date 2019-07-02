@@ -22,10 +22,12 @@
 #import "TableViewHead1.h"
 #import "TableViewHeadSetter1.h"
 
-@interface ViewController () <TBTableViewBaseProxyDelegate, TBTableViewCellDelegate>
+#import "TBTableViewBaseProxyBlock.h"
+
+@interface ViewController () </*TBTableViewBaseProxyDelegate,*/ TBTableViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) TBTableViewBaseProxy *tableProxy;
+//@property (nonatomic, strong) TBTableViewBaseProxy *tableProxy;
 
 @property (nonatomic, strong) NSArray *dataArr;
 
@@ -54,7 +56,6 @@
     m11.title1 = @"2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。";
     m11.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。";
     
-    
     TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
     hm0.leftTitle = @"魏则西在父母的带领下先后从陕西咸阳4次前往北京治疗。";
     hm0.rightTitle = @"“我和他妈妈谢谢广大知友对则西的关爱，希望大家关爱生命，热爱生活。”";
@@ -72,10 +73,53 @@
                      @{@"head": hm1, @"data": @[m0]},
                      @{@"head": hm10, @"data": @[m11]}];
     
-    self.tableProxy = [TBTableViewBaseProxy proxyWithTableView:self.tableView];
-    self.tableProxy.delegate = self;
+//    self.tableProxy = [TBTableViewBaseProxy proxyWithTableView:self.tableView];
+//    self.tableProxy.delegate = self;
+    
+    TBTableViewBaseProxyBlock *proxyBlock = [TBTableViewBaseProxyBlock proxyBlockWithTableView:self.tableView];
+    
+    __weak typeof(self) ws = self;
+    proxyBlock.numberOfSections = ^NSInteger(TBTableViewBaseProxy *proxy) {
+        return ws.dataArr.count;
+    };
+    proxyBlock.modelForSectionHeader = ^NSObject *(TBTableViewBaseProxy *proxy, NSInteger section) {
+        NSObject *model = ws.dataArr[section][@"head"];
+        model.tb_eleUseXib = YES;
+        if ([model isKindOfClass:TableViewHeadModel0.class]) {
+            model.tb_eleClass = TableViewHead0.class;
+        }
+        if ([model isKindOfClass:TableViewHeadModel1.class]) {
+            model.tb_eleClass = TableViewHead1.class;
+            model.tb_eleSetter = TableViewHeadSetter1.new;
+        }
+        return model;
+    };
+    
+    proxyBlock.didSelectRowWithModel = ^(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath) {
+        [ws.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        NSLog(@"aaa: %@", indexPath);
+    };
+    
+    proxyBlock.numberOfRowsInSection = ^NSInteger(TBTableViewBaseProxy *proxy, NSInteger section) {
+        return [ws.dataArr[section][@"data"] count];
+    };
+    proxyBlock.modelForRow = ^NSObject *(TBTableViewBaseProxy *proxy, NSIndexPath *indexPath) {
+        NSObject *model = ws.dataArr[indexPath.section][@"data"][indexPath.row];
+        model.tb_eleUseXib = YES;
+        if ([model isKindOfClass:TableViewCellModel0.class]) {
+            model.tb_eleClass = TableViewCell0.class;
+            model.tb_eleDoNotCacheHeight = YES;
+        }
+        if ([model isKindOfClass:TableViewCellModel1.class]) {
+            model.tb_eleClass = TableViewCell1.class;
+            model.tb_eleWeakDelegate = ws;
+        }
+        return model;
+    };
+    
 }
 
+/*
 #pragma mark - - TBTableViewBaseProxyDelegate
 
 - (NSInteger)numberOfSectionsInProxy:(TBTableViewBaseProxy *)proxy
@@ -116,12 +160,13 @@
     }
     return model;
 }
+ */
 
 #pragma mark - - TBTableViewCellDelegate
 - (void)didSelectCell:(UITableViewCell *)cell withModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath
 {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
-    NSLog(@"aaa: %@", indexPath);
+    NSLog(@"bbb: %@", indexPath);
 }
 
 @end
