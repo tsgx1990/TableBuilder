@@ -29,12 +29,12 @@
 
 - (TBTableViewBaseProxy *)tb_setProxyDelegate:(id<TBTableViewBaseProxyDelegate>)delegate
 {
-    return [self tb_setProxyClass:TBTableViewBaseProxy.class delegate:delegate];
+    return [self tb_setProxyClass:nil delegate:delegate];
 }
 
 - (TBTableViewBaseProxy *)tb_setProxyStrongDelegate:(id<TBTableViewBaseProxyDelegate>)strongDelegate
 {
-    return [self tb_setProxyClass:TBTableViewBaseProxy.class strongDelegate:strongDelegate];
+    return [self tb_setProxyClass:nil strongDelegate:strongDelegate];
 }
 
 - (TBTableViewBaseProxy *)tb_setProxyClass:(Class)proxyClass delegate:(id<TBTableViewBaseProxyDelegate>)delegate
@@ -203,8 +203,8 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
     else {
         model = [self.delegate modelInProxy:self forRowAtIndexPath:indexPath];
     }
-    if ([self.delegate respondsToSelector:@selector(proxy:willUseCellModel:)]) {
-        [self.delegate proxy:self willUseCellModel:model];
+    if ([self.delegate respondsToSelector:@selector(proxy:willUseCellModel:atIndexPath:)]) {
+        [self.delegate proxy:self willUseCellModel:model atIndexPath:indexPath];
     }
     return model;
 }

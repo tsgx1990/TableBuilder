@@ -56,10 +56,10 @@
     }
 }
 
-- (void)proxy:(TBTableViewBaseProxy *)proxy willUseCellModel:(NSObject *)model
+- (void)proxy:(TBTableViewBaseProxy *)proxy willUseCellModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath
 {
     if (self.willUseCellModel) {
-        self.willUseCellModel(proxy, model);
+        self.willUseCellModel(proxy, model, indexPath);
     }
 }
 

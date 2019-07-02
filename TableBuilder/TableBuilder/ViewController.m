@@ -116,7 +116,9 @@
         }
         return model;
     };
-    
+    proxyBlock.willUseCellModel = ^(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath) {
+        NSLog(@"willUseCellModel: %@, indexPath: %@", model, indexPath);
+    };
 }
 
 /*

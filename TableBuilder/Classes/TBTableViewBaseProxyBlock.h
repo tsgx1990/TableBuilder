@@ -22,7 +22,7 @@
 
 @property (nonatomic, copy) void(^didSelectRowWithModel)(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath);
 
-@property (nonatomic, copy) void(^willUseCellModel)(TBTableViewBaseProxy *proxy, NSObject *model);
+@property (nonatomic, copy) void(^willUseCellModel)(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath);
 
 // required
 @property (nonatomic, copy) NSInteger(^numberOfRowsInSection)(TBTableViewBaseProxy *proxy, NSInteger section);

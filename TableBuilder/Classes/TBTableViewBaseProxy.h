@@ -23,7 +23,7 @@
 
 - (void)proxy:(TBTableViewBaseProxy *)proxy didSelectRowWithModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath;
 
-- (void)proxy:(TBTableViewBaseProxy *)proxy willUseCellModel:(NSObject *)model;
+- (void)proxy:(TBTableViewBaseProxy *)proxy willUseCellModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath;
 
 //@required
 - (NSInteger)proxy:(TBTableViewBaseProxy *)proxy numberOfRowsInSection:(NSInteger)section;
