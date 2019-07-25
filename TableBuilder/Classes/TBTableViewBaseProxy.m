@@ -158,8 +158,8 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     NSObject *model = cell.tb_model;
     
-    if (model.tb_cellDeselect) {
-        model.tb_cellDeselect(tableView, indexPath);
+    if (model.tb_cellDeselectRow) {
+        model.tb_cellDeselectRow(tableView, indexPath);
     }
     
     if (model.tb_cellDidSelect) {

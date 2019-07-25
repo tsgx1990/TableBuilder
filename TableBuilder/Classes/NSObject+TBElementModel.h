@@ -62,7 +62,7 @@
 // 在cell选中之后调用，只对UITableViewCell有效。
 // 该属性在默认情况下，cell选中后会执行 [tableView deselectRowAtIndexPath:indexPath animated:YES] 操作；
 // 如果不想在cell选中时执行上面的操作，则需要主动将该属性置为nil。
-@property (nonatomic, copy) void(^tb_cellDeselect)(UITableView *tableView, NSIndexPath *indexPath);
+@property (nonatomic, copy) void(^tb_cellDeselectRow)(UITableView *tableView, NSIndexPath *indexPath);
 
 // 设置cell被选中时的回调，只对UITableViewCell有效
 @property (nonatomic, copy) void(^tb_cellDidSelect)(id model, NSIndexPath *indexPath);
