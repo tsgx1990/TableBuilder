@@ -18,6 +18,26 @@
     if (!element.contentView.translatesAutoresizingMaskIntoConstraints) {
         element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
     }
+    
+    if (!element.tb_forCalculateHeight) {
+        // 设置element的背景色
+        if (model.tb_eleColor) {
+            element.backgroundColor = element.contentView.backgroundColor = model.tb_eleColor;
+        }
+        // 设置cell的选中颜色
+        if (model.tb_cellSelectedColor
+            && [element respondsToSelector:@selector(selectedBackgroundView)]
+            && [element respondsToSelector:@selector(selectionStyle)]) {
+            
+            static void *customSelectedBackgroundViewKey = &customSelectedBackgroundViewKey;
+            if (!objc_getAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey)) {
+                element.selectedBackgroundView = UIView.new;
+                objc_setAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey, @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }
+            element.selectionStyle = UITableViewCellSelectionStyleDefault;
+            element.selectedBackgroundView.backgroundColor = model.tb_cellSelectedColor;
+        }
+    }
     if (model.tb_eleSetter) {
         [model.tb_eleSetter setModel:model forElement:element];
     }
@@ -28,7 +48,7 @@
 
 + (CGFloat)heightWithModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
-    [self setIsHeightCal:YES forElement:element];
+    [self markElementAsHeightCalculate:element];
     [self setModel:model forElement:element];
     CGFloat cellHeight = 0;
     if (element.contentView.constraints.count > 0) {
@@ -45,6 +65,20 @@
     return cellHeight;
 }
 
+// 缓存计算出来的cell高度
+static void *_tb_modelCalculatedHeightKey = &_tb_modelCalculatedHeightKey;
+
++ (void)setCalculatedHeight:(CGFloat)height forModel:(NSObject *)model
+{
+    objc_setAssociatedObject(model, _tb_modelCalculatedHeightKey, @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
++ (CGFloat)calculatedHeigthForModel:(NSObject *)model
+{
+    NSNumber *obj = objc_getAssociatedObject(model, _tb_modelCalculatedHeightKey);
+    return obj.floatValue;
+}
+
 #pragma mark - - delegate
 + (id)delegateForElement:(UIView<TBTableViewElement> *)element
 {
@@ -57,7 +91,7 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    if (model.tb_eleSetSync || [self isHeightCalForElement:element]) {
+    if (model.tb_eleSetSync || element.tb_forCalculateHeight) {
         [self syncSetModel:model forElement:element];
         [element setNeedsLayout];
         return;
@@ -81,15 +115,15 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 #pragma mark - - isForHeightCalculating
 static void *_tb_elementIsHCalKey = &_tb_elementIsHCalKey;
 
-+ (void)setIsHeightCal:(BOOL)heightCal forElement:(UIView<TBTableViewElement> *)element
++ (void)markElementAsHeightCalculate:(UIView<TBTableViewElement> *)element
 {
-    objc_setAssociatedObject(element, _tb_elementIsHCalKey, @(heightCal), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(element, _tb_elementIsHCalKey, @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 + (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element
 {
     NSNumber *obj = objc_getAssociatedObject(element, _tb_elementIsHCalKey);
-    return obj.boolValue;
+    return !!obj;
 }
 
 @end

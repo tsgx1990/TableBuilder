@@ -41,4 +41,17 @@
 // 默认为NO，即异步更新（当element比较复杂时，异步更新可以避免列表卡顿）
 @property (nonatomic, assign) BOOL tb_eleSetSync;
 
+// 可以通过该属性指定element的高度；
+// 如果没有指定高度，可以通过该属性获取计算后的高度
+@property (nonatomic, assign) CGFloat tb_eleHeight;
+
+// 设置element的背景色
+@property (nonatomic, copy) UIColor *tb_eleColor;
+
+// 设置cell的选中颜色，只对UITableViewCell有效
+@property (nonatomic, copy) UIColor *tb_cellSelectedColor;
+
+// 如果设置了tb_eleHeight，则该属性返回YES
+@property (nonatomic, readonly) BOOL tb_eleHeightIsFixed;
+
 @end

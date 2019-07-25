@@ -220,42 +220,42 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
     
+    // 如果通过model指定了element的高度，则直接返回该高度
+    if (model.tb_eleHeightIsFixed) {
+        return model.tb_eleHeight;
+    }
+    
     // 处理不需要缓存高度的情况
     if (model.tb_eleDoNotCacheHeight) {
         CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
         return eleHeight;
     }
     
-    // 先尝试从 model 中获取 element 的高度
-    NSString *eleHeightKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
-    SEL eleHeightKey = NSSelectorFromString(eleHeightKeyStr);
-    
-    // 当tableView宽度改变的时候，element 的高度需要重新计算
-    NSArray *arr = objc_getAssociatedObject(model, eleHeightKey);
-    NSNumber *storeTableWidth = arr.firstObject;
-    NSNumber *storeEleHeight = arr.lastObject;
+    NSString *tableWidthKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
+    SEL tableWidthKey = NSSelectorFromString(tableWidthKeyStr);
+    NSNumber *tableWidthObj = objc_getAssociatedObject(model, tableWidthKey);
     
     // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
     if (model.tb_eleRefreshHeightCache) {
         model.tb_eleRefreshHeightCache = NO;
     }
-    else if (storeTableWidth
-             && storeEleHeight
-             && storeTableWidth.floatValue == tableView.frame.size.width)
-    {
-        return storeEleHeight.floatValue;
+    // 如果tableView的宽度未发生改变，则直接从缓存中获取高度
+    else if (tableWidthObj && fabs(tableWidthObj.floatValue - tableView.frame.size.width) < DBL_EPSILON) {
+        return [TBTableViewElementHelper calculatedHeigthForModel:model];
     }
     
+    objc_setAssociatedObject(model, tableWidthKey, @(self.tableView.frame.size.width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    // 如果tableView的宽度发生了改变，element 的高度需要重新计算，并缓存到model中
     CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
-    arr = @[@(tableView.frame.size.width), @(eleHeight)];
-    objc_setAssociatedObject(model, eleHeightKey, arr, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    [TBTableViewElementHelper setCalculatedHeight:eleHeight forModel:model];
     return eleHeight;
 }
 
 - (CGFloat)calHeightWithElement:(UIView<TBTableViewElement> *)element andModel:(NSObject *)model inTableView:(UITableView *)tableView
 {
     // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
-    UIView<TBTableViewElement> * elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
+    UIView<TBTableViewElement> *elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
     CGFloat eleHeight = [TBTableViewElementHelper heightWithModel:model forElement:elementForCal];
     return eleHeight;
 }
@@ -351,7 +351,7 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
             });
         }
     }
-    if (!storeTableWidth || storeTableWidth.floatValue != tableView.frame.size.width) {
+    if (!storeTableWidth || fabs(storeTableWidth.floatValue - tableView.frame.size.width) > DBL_EPSILON) {
         shouldUpdate = YES;
         element.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
         if (element.contentView.constraints.count > 0) {

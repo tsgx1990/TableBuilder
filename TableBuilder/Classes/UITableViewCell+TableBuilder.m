@@ -20,6 +20,11 @@
     return [TBTableViewElementHelper delegateForElement:self];
 }
 
+- (BOOL)tb_forCalculateHeight
+{
+    return [TBTableViewElementHelper isHeightCalForElement:self];
+}
+
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {

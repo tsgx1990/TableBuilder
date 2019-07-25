@@ -41,6 +41,8 @@
     TableViewCellModel0 *m0 = TableViewCellModel0.new;
     m0.title = @"家庭是指婚姻关系、血缘关系或收养关系基础上产生的，亲属之间所构成的社会生活单位。 [1]  家庭是幸福生活的一种存在。";
     m0.subtitle = @"家庭有广义和狭义之分，狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
+    m0.tb_eleColor = UIColor.purpleColor;
+    m0.tb_cellSelectedColor = UIColor.orangeColor;
     
     TableViewCellModel0 *m1 = TableViewCellModel0.new;
     m1.title = @"从社会设置来说，家庭是最基本的社会设置之一，是人类最基本最重要的一种制度和群体形式。";

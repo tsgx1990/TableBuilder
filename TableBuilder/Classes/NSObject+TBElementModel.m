@@ -7,6 +7,7 @@
 //
 
 #import "NSObject+TBElementModel.h"
+#import "TBTableViewElementHelper.h"
 #import <objc/runtime.h>
 
 @interface _TBElementModelWeakWrapper : NSObject
@@ -164,6 +165,49 @@
 {
     NSNumber *obj = objc_getAssociatedObject(self, _cmd);
     return obj.boolValue;
+}
+
+- (void)setTb_eleHeight:(CGFloat)tb_eleHeight
+{
+    objc_setAssociatedObject(self, @selector(tb_eleHeight), @(tb_eleHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (CGFloat)tb_eleHeight
+{
+    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
+    if (obj) {
+        return obj.floatValue;
+    }
+    else {
+        CGFloat h = [TBTableViewElementHelper calculatedHeigthForModel:self];
+        return h;
+    }
+}
+
+- (BOOL)tb_eleHeightIsFixed
+{
+    NSNumber *obj = objc_getAssociatedObject(self, @selector(tb_eleHeight));
+    return !!obj;
+}
+
+- (void)setTb_eleColor:(UIColor *)tb_eleColor
+{
+    objc_setAssociatedObject(self, @selector(tb_eleColor), tb_eleColor, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (UIColor *)tb_eleColor
+{
+    return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)setTb_cellSelectedColor:(UIColor *)tb_cellSelectedColor
+{
+    objc_setAssociatedObject(self, @selector(tb_cellSelectedColor), tb_cellSelectedColor, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (UIColor *)tb_cellSelectedColor
+{
+    return objc_getAssociatedObject(self, _cmd);
 }
 
 @end

@@ -13,6 +13,11 @@
 @required
 @property (nonatomic, strong) UIView *contentView;
 
+// 该属性用于判断当前element是否只是用于计算高度。
+// 可以根据该属性进行一些优化：
+// 比如cell上有网络图片，则可以根据是否为计算高度的cell来决定是否加载图片。
+@property (nonatomic, readonly) BOOL tb_forCalculateHeight;
+
 @property (nonatomic, readonly) NSObject *tb_model;
 @property (nonatomic, readonly) id tb_delegate;
 
@@ -21,6 +26,10 @@
 @optional
 // you should override this method if you don't use autolayout
 - (CGFloat)tb_elementHeightForModel:(NSObject *)model;
+
+// 只用于 UITableViewCell
+@property(nonatomic) UITableViewCellSelectionStyle selectionStyle;
+@property(nonatomic, strong) UIView *selectedBackgroundView;
 
 @end
 
