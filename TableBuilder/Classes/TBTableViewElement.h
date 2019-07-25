@@ -18,12 +18,17 @@
 // 比如cell上有网络图片，则可以根据是否为计算高度的cell来决定是否加载图片。
 @property (nonatomic, readonly) BOOL tb_forCalculateHeight;
 
+// element的前一个model
+@property (nonatomic, readonly) NSObject *tb_prevModel;
+
+// element的当前model
 @property (nonatomic, readonly) NSObject *tb_model;
 @property (nonatomic, readonly) id tb_delegate;
 
+@optional
+
 - (void)tb_syncSetModel:(NSObject *)model;
 
-@optional
 // you should override this method if you don't use autolayout
 - (CGFloat)tb_elementHeightForModel:(NSObject *)model;
 

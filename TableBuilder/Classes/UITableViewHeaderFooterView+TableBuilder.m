@@ -22,6 +22,11 @@
     return [TBTableViewElementHelper modelForElement:self];
 }
 
+- (NSObject *)tb_prevModel
+{
+    return [TBTableViewElementHelper prevModelForElement:self];
+}
+
 - (id)tb_delegate
 {
     return [TBTableViewElementHelper delegateForElement:self];
@@ -30,11 +35,6 @@
 - (BOOL)tb_forCalculateHeight
 {
     return [TBTableViewElementHelper isHeightCalForElement:self];
-}
-
-- (void)tb_syncSetModel:(NSObject *)model
-{
-    NSAssert(0, @"Subclass should override this method!");
 }
 
 @end

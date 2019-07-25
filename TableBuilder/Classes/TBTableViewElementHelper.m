@@ -42,7 +42,9 @@
         [model.tb_eleSetter setModel:model forElement:element];
     }
     else {
-        [element tb_syncSetModel:model];
+        if ([element respondsToSelector:@selector(tb_syncSetModel:)]) {
+            [element tb_syncSetModel:model];
+        }
     }
 }
 
@@ -88,11 +90,14 @@ static void *_tb_modelCalculatedHeightKey = &_tb_modelCalculatedHeightKey;
 }
 
 #pragma mark - - setModel
+static void *_tb_elementPrevModelKey = &_tb_elementPrevModelKey;
 static void *_tb_elementModelKey = &_tb_elementModelKey;
 
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
+    objc_setAssociatedObject(element, _tb_elementPrevModelKey, element.tb_model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
     if (model.tb_eleSetSync || element.tb_forCalculateHeight) {
         [self syncSetModel:model forElement:element];
         [element setNeedsLayout];
@@ -112,6 +117,11 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 + (NSObject *)modelForElement:(UIView<TBTableViewElement> *)element
 {
     return objc_getAssociatedObject(element, _tb_elementModelKey);
+}
+
++ (NSObject *)prevModelForElement:(UIView<TBTableViewElement> *)element
+{
+    return objc_getAssociatedObject(element, _tb_elementPrevModelKey);
 }
 
 #pragma mark - - isForHeightCalculating
