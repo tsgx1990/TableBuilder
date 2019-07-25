@@ -221,4 +221,33 @@
     return obj.boolValue;
 }
 
+- (void)setTb_cellDeselect:(void (^)(UITableView *, NSIndexPath *))tb_cellDeselect
+{
+    objc_setAssociatedObject(self, _cmd, @(YES), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(tb_cellDeselect), tb_cellDeselect, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (void (^)(UITableView *, NSIndexPath *))tb_cellDeselect
+{
+    id setted = objc_getAssociatedObject(self, @selector(setTb_cellDeselect:));
+    if (setted) {
+        return objc_getAssociatedObject(self, _cmd);
+    }
+    else {
+        return ^(UITableView *tableView, NSIndexPath *indexPath) {
+            [tableView deselectRowAtIndexPath:indexPath animated:YES];
+        };
+    }
+}
+
+- (void)setTb_cellDidSelect:(void (^)(id, NSIndexPath *))tb_cellDidSelect
+{
+    objc_setAssociatedObject(self, @selector(tb_cellDidSelect), tb_cellDidSelect, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (void (^)(id, NSIndexPath *))tb_cellDidSelect
+{
+    return objc_getAssociatedObject(self, _cmd);
+}
+
 @end

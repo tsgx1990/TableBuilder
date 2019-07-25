@@ -20,7 +20,4 @@
 
 @property (nonatomic, readonly) id<TBTableViewCellDelegate> tb_delegate;
 
-// you can override this method
-- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
-
 @end

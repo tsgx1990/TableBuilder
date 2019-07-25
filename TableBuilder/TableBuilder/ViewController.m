@@ -49,6 +49,9 @@
     TableViewCellModel0 *m1 = TableViewCellModel0.new;
     m1.title = @"从社会设置来说，家庭是最基本的社会设置之一，是人类最基本最重要的一种制度和群体形式。";
     m1.subtitle = @"从功能来说，家庭是儿童社会化，供养老人，是满足经济合作的人类亲密关系的基本单位。从关系来说，家庭是由具有婚姻、血缘和收养关系的人们长期居住的共同群体。";
+    m1.tb_cellDidSelect = ^(TableViewCellModel0 *model, NSIndexPath *indexPath) {
+        NSLog(@"--model: %@, indexPath: %@", model, indexPath);
+    };
     
     TableViewIntrinsicModel0 *m2 = TableViewIntrinsicModel0.new;
     m2.imgColor = UIColor.purpleColor;
@@ -105,7 +108,7 @@
     };
     
     proxyBlock.didSelectRowWithModel = ^(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath) {
-        [ws.tableView deselectRowAtIndexPath:indexPath animated:YES];
+//        [ws.tableView deselectRowAtIndexPath:indexPath animated:YES];
         NSLog(@"aaa: %@", indexPath);
     };
     
@@ -176,7 +179,7 @@
 #pragma mark - - TBTableViewCellDelegate
 - (void)didSelectCell:(UITableViewCell *)cell withModel:(NSObject *)model atIndexPath:(NSIndexPath *)indexPath
 {
-    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+//    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     NSLog(@"bbb: %@", indexPath);
 }
 

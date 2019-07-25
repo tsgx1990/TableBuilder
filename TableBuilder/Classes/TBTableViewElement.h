@@ -31,6 +31,9 @@
 @property(nonatomic) UITableViewCellSelectionStyle selectionStyle;
 @property(nonatomic, strong) UIView *selectedBackgroundView;
 
+// 只用于 UITableViewCell
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
+
 @end
 
 

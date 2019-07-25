@@ -154,15 +154,26 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+{   
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    if ([self.delegate respondsToSelector:@selector(proxy:didSelectRowWithModel:atIndexPath:)]) {
+    NSObject *model = cell.tb_model;
+    
+    if (model.tb_cellDeselect) {
+        model.tb_cellDeselect(tableView, indexPath);
+    }
+    
+    if (model.tb_cellDidSelect) {
+        model.tb_cellDidSelect(model, indexPath);
+    }
+    else if ([cell respondsToSelector:@selector(didSelectCellAtIndexPath:)]) {
+        [cell didSelectCellAtIndexPath:indexPath];
+    }
+    else if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
+        [cell.tb_delegate didSelectCell:cell withModel:model atIndexPath:indexPath];
+    }
+    else if ([self.delegate respondsToSelector:@selector(proxy:didSelectRowWithModel:atIndexPath:)]) {
         [self.delegate proxy:self didSelectRowWithModel:cell.tb_model atIndexPath:indexPath];
     }
-//    if ([cell.tb_delegate respondsToSelector:@selector(didSelectCell:withModel:atIndexPath:)]) {
-//        [cell.tb_delegate didSelectCell:cell withModel:cell.tb_model atIndexPath:indexPath];
-//    }
-    [cell didSelectCellAtIndexPath:indexPath];
 }
 
 #pragma mark - - UITableViewDataSource
