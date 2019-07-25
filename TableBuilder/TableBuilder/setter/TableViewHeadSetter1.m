@@ -13,7 +13,7 @@
 
 @implementation TableViewHeadSetter1
 
-- (void)setModel:(TableViewHeadModel1 *)model forElement:(TableViewHead1 *)element
++ (void)setModel:(TableViewHeadModel1 *)model forElement:(TableViewHead1 *)element
 {
     element.leftLbl.text = model.leftTitle;
     element.midLbl.text = model.midTitle;

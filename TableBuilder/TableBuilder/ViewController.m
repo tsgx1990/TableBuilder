@@ -102,7 +102,9 @@
         }
         if ([model isKindOfClass:TableViewHeadModel1.class]) {
             model.tb_eleClass = TableViewHead1.class;
-            model.tb_eleSetter = TableViewHeadSetter1.new;
+            model.tb_eleSetter = (id)TableViewHeadSetter1.class;
+            // 或使用如下设置：
+            // model.tb_eleWeakSetter = (id)TableViewHeadSetter1.class;
         }
         return model;
     };

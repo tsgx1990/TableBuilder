@@ -39,7 +39,9 @@
         }
     }
     if (model.tb_eleSetter) {
-        [model.tb_eleSetter setModel:model forElement:element];
+        if ([model.tb_eleSetter respondsToSelector:@selector(setModel:forElement:)]) {
+            [model.tb_eleSetter setModel:model forElement:element];
+        }
     }
     else {
         if ([element respondsToSelector:@selector(tb_syncSetModel:)]) {
