@@ -20,6 +20,9 @@
 		E7217CDD22C5EB49009AA857 /* TableViewCell0.xib in Resources */ = {isa = PBXBuildFile; fileRef = E7217CCD22C5EB49009AA857 /* TableViewCell0.xib */; };
 		E7217CDE22C5EB49009AA857 /* TableViewCell1.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CD122C5EB49009AA857 /* TableViewCell1.m */; };
 		E7217CDF22C5EB49009AA857 /* TableViewHead0.m in Sources */ = {isa = PBXBuildFile; fileRef = E7217CD222C5EB49009AA857 /* TableViewHead0.m */; };
+		E74968B122E98B6E00E4ECA0 /* TableViewIntrinsicCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E74968AF22E98B6E00E4ECA0 /* TableViewIntrinsicCell.m */; };
+		E74968B222E98B6E00E4ECA0 /* TableViewIntrinsicCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = E74968B022E98B6E00E4ECA0 /* TableViewIntrinsicCell.xib */; };
+		E777612722E9912E00A2F522 /* TableViewIntrinsicModel0.m in Sources */ = {isa = PBXBuildFile; fileRef = E777612622E9912E00A2F522 /* TableViewIntrinsicModel0.m */; };
 		E7AFAE0B22C463C200852A61 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE0A22C463C200852A61 /* AppDelegate.m */; };
 		E7AFAE0E22C463C200852A61 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AFAE0D22C463C200852A61 /* ViewController.m */; };
 		E7AFAE1122C463C200852A61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E7AFAE0F22C463C200852A61 /* Main.storyboard */; };
@@ -76,6 +79,11 @@
 		E7217CD022C5EB49009AA857 /* TableViewHead1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewHead1.h; sourceTree = "<group>"; };
 		E7217CD122C5EB49009AA857 /* TableViewCell1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewCell1.m; sourceTree = "<group>"; };
 		E7217CD222C5EB49009AA857 /* TableViewHead0.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewHead0.m; sourceTree = "<group>"; };
+		E74968AE22E98B6E00E4ECA0 /* TableViewIntrinsicCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewIntrinsicCell.h; sourceTree = "<group>"; };
+		E74968AF22E98B6E00E4ECA0 /* TableViewIntrinsicCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewIntrinsicCell.m; sourceTree = "<group>"; };
+		E74968B022E98B6E00E4ECA0 /* TableViewIntrinsicCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TableViewIntrinsicCell.xib; sourceTree = "<group>"; };
+		E777612522E9912E00A2F522 /* TableViewIntrinsicModel0.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TableViewIntrinsicModel0.h; sourceTree = "<group>"; };
+		E777612622E9912E00A2F522 /* TableViewIntrinsicModel0.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TableViewIntrinsicModel0.m; sourceTree = "<group>"; };
 		E7AFAE0622C463C200852A61 /* TableBuilder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TableBuilder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7AFAE0922C463C200852A61 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E7AFAE0A22C463C200852A61 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -148,6 +156,8 @@
 				E7217CC522C5EB49009AA857 /* TableViewCellModel0.m */,
 				E7217CC322C5EB49009AA857 /* TableViewCellModel1.h */,
 				E7217CBE22C5EB49009AA857 /* TableViewCellModel1.m */,
+				E777612522E9912E00A2F522 /* TableViewIntrinsicModel0.h */,
+				E777612622E9912E00A2F522 /* TableViewIntrinsicModel0.m */,
 				E7217CC422C5EB49009AA857 /* TableViewHeadModel0.h */,
 				E7217CC122C5EB49009AA857 /* TableViewHeadModel0.m */,
 				E7217CBF22C5EB49009AA857 /* TableViewHeadModel1.h */,
@@ -165,6 +175,9 @@
 				E7217CCB22C5EB49009AA857 /* TableViewCell1.h */,
 				E7217CD122C5EB49009AA857 /* TableViewCell1.m */,
 				E7217CCC22C5EB49009AA857 /* TableViewCell1.xib */,
+				E74968AE22E98B6E00E4ECA0 /* TableViewIntrinsicCell.h */,
+				E74968AF22E98B6E00E4ECA0 /* TableViewIntrinsicCell.m */,
+				E74968B022E98B6E00E4ECA0 /* TableViewIntrinsicCell.xib */,
 				E7217CCE22C5EB49009AA857 /* TableViewHead0.h */,
 				E7217CD222C5EB49009AA857 /* TableViewHead0.m */,
 				E7217CC822C5EB49009AA857 /* TableViewHead0.xib */,
@@ -357,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7AFAE1622C463C400852A61 /* LaunchScreen.storyboard in Resources */,
+				E74968B222E98B6E00E4ECA0 /* TableViewIntrinsicCell.xib in Resources */,
 				E7217CDD22C5EB49009AA857 /* TableViewCell0.xib in Resources */,
 				E7217CD822C5EB49009AA857 /* TableViewHead1.xib in Resources */,
 				E7217CD922C5EB49009AA857 /* TableViewHead0.xib in Resources */,
@@ -395,6 +409,7 @@
 				E7217CDB22C5EB49009AA857 /* TableViewHead1.m in Sources */,
 				E7217CDF22C5EB49009AA857 /* TableViewHead0.m in Sources */,
 				E7AFAE4722C48BF800852A61 /* UITableViewCell+TableBuilder.m in Sources */,
+				E777612722E9912E00A2F522 /* TableViewIntrinsicModel0.m in Sources */,
 				E7AFAE4122C46D3000852A61 /* TBTableViewBaseProxy.m in Sources */,
 				E7AFAE0E22C463C200852A61 /* ViewController.m in Sources */,
 				E7AFAE1922C463C400852A61 /* main.m in Sources */,
@@ -405,6 +420,7 @@
 				E7217CDA22C5EB49009AA857 /* TableViewCell0.m in Sources */,
 				E7217CD622C5EB49009AA857 /* TableViewHeadModel1.m in Sources */,
 				E7217CDE22C5EB49009AA857 /* TableViewCell1.m in Sources */,
+				E74968B122E98B6E00E4ECA0 /* TableViewIntrinsicCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -210,4 +210,15 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
+- (void)setTb_eleUseManualHeight:(BOOL)tb_eleUseManualHeight
+{
+    objc_setAssociatedObject(self, @selector(tb_eleUseManualHeight), @(tb_eleUseManualHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL)tb_eleUseManualHeight
+{
+    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
+    return obj.boolValue;
+}
+
 @end

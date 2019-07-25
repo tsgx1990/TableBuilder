@@ -15,6 +15,8 @@
 #import "TableViewCellModel1.h"
 #import "TableViewCell1.h"
 
+#import "TableViewIntrinsicCell.h"
+
 #import "TableViewHeadModel0.h"
 #import "TableViewHead0.h"
 
@@ -48,6 +50,11 @@
     m1.title = @"从社会设置来说，家庭是最基本的社会设置之一，是人类最基本最重要的一种制度和群体形式。";
     m1.subtitle = @"从功能来说，家庭是儿童社会化，供养老人，是满足经济合作的人类亲密关系的基本单位。从关系来说，家庭是由具有婚姻、血缘和收养关系的人们长期居住的共同群体。";
     
+    TableViewIntrinsicModel0 *m2 = TableViewIntrinsicModel0.new;
+    m2.imgColor = UIColor.purpleColor;
+    m2.tb_eleClass = TableViewIntrinsicCell.class;
+    m2.tb_eleUseManualHeight = YES;
+    
     TableViewCellModel1 *m10 = TableViewCellModel1.new;
     m10.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密关系的基本单位。";
     m10.title1 = @"从关系来说，家庭是由具有婚姻、血缘和收养关系的人们长期居住的共同群体。满足经济合作的人类亲密关系的基本单位。";
@@ -71,7 +78,7 @@
     hm10.midTitle = @"学校前身是1931年诞生于江西瑞金的中央军委无线电学校，是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。";
     hm10.rightTitle = @"产生了120多位解放军将领，成长起了19位两院院士。";
     
-    self.dataArr = @[@{@"head": hm0, @"data": @[m10, m1]},
+    self.dataArr = @[@{@"head": hm0, @"data": @[m10, m1, m2]},
                      @{@"head": hm1, @"data": @[m0]},
                      @{@"head": hm10, @"data": @[m11]}];
     

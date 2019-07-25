@@ -45,13 +45,18 @@
 // 如果没有指定高度，可以通过该属性获取计算后的高度
 @property (nonatomic, assign) CGFloat tb_eleHeight;
 
+// 如果设置了tb_eleHeight，则该属性返回YES
+@property (nonatomic, readonly) BOOL tb_eleHeightIsFixed;
+
 // 设置element的背景色
 @property (nonatomic, copy) UIColor *tb_eleColor;
 
 // 设置cell的选中颜色，只对UITableViewCell有效
 @property (nonatomic, copy) UIColor *tb_cellSelectedColor;
 
-// 如果设置了tb_eleHeight，则该属性返回YES
-@property (nonatomic, readonly) BOOL tb_eleHeightIsFixed;
+// 默认为NO，即 优先尝试使用自动布局来计算element高度。
+// 如果为YES，element必须实现 tb_elementHeightForModel: 方法。
+// 如果使用自动布局计算出的高度大于0，但不是正确的高度，则需要将该属性指定为YES；
+@property (nonatomic, assign) BOOL tb_eleUseManualHeight;
 
 @end
