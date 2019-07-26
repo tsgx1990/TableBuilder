@@ -12,8 +12,13 @@
 @interface TBTableViewBaseProxyBlock : NSObject <TBTableViewBaseProxyDelegate>
 
 - (instancetype)initWithTableView:(UITableView *)tableView;
+- (instancetype)initWithTableView:(UITableView *)tableView messageTarget:(id<TBTableViewBaseProxyMessageForwardProtocol>)messageTarget;
 
 + (instancetype)proxyBlockWithTableView:(UITableView *)tableView;
++ (instancetype)proxyBlockWithTableView:(UITableView *)tableView messageTarget:(id<TBTableViewBaseProxyMessageForwardProtocol>)messageTarget;
+
+@property (nonatomic, weak, readonly) UITableView *tableView;
+@property (nonatomic, weak, readonly) TBTableViewBaseProxy *proxy;
 
 // optional
 @property (nonatomic, copy) NSInteger(^numberOfSections)(TBTableViewBaseProxy *proxy);

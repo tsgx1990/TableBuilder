@@ -63,8 +63,8 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
 {
     objc_setAssociatedObject(self, _tb_tableProxyKey, tb_proxy, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     tb_proxy.tableView = self;
-    self.delegate = tb_proxy;
-    self.dataSource = tb_proxy;
+//    self.delegate = tb_proxy;
+//    self.dataSource = tb_proxy;
     self.rowHeight = 44.0f;
     self.estimatedRowHeight = 0.0f;
 }
@@ -82,6 +82,8 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
 
 
 @implementation TBTableViewBaseProxy
+@synthesize delegate = _delegate;
+@synthesize strongDelegate = _strongDelegate;
 
 - (instancetype)initWithTableView:(UITableView *)tableView
 {
@@ -97,12 +99,20 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
     return proxy;
 }
 
-- (id<TBTableViewBaseProxyDelegate>)delegate
+- (void)setDelegate:(id<TBTableViewBaseProxyDelegate>)delegate
 {
-    if (!_delegate) {
-        return self.strongDelegate;
+    _delegate = delegate;
+    // 在此处进行tableView的代理设置，主要是为了保证消息转发机制正常工作
+    if (delegate) {
+        self.tableView.delegate = self;
+        self.tableView.dataSource = self;
     }
-    return _delegate;
+}
+
+- (void)setStrongDelegate:(id<TBTableViewBaseProxyDelegate>)strongDelegate
+{
+    _strongDelegate = strongDelegate;
+    self.delegate = strongDelegate;
 }
 
 #pragma mark - - UITableViewDelegate
@@ -200,6 +210,42 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:model.tb_eleReuseID];
     [TBTableViewElementHelper setModel:model forElement:cell];
     return cell;
+}
+
+#pragma mark - - 消息转发，可以在不子类化的情况下实现更多的代理方法
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    BOOL ok = [super respondsToSelector:aSelector];
+    if (ok) {
+        return YES;
+    }
+    id target = [self _targetForMessageForwardingWithSelecotr:aSelector];
+    if ([target respondsToSelector:aSelector]) {
+        return YES;
+    }
+    return NO;
+}
+
+- (id)forwardingTargetForSelector:(SEL)aSelector
+{
+    id target = [self _targetForMessageForwardingWithSelecotr:aSelector];
+    if ([target respondsToSelector:aSelector]) {
+        return target;
+    }
+    else {
+        return [super forwardingTargetForSelector:aSelector];
+    }
+}
+
+- (id<TBTableViewBaseProxyMessageForwardProtocol>)_targetForMessageForwardingWithSelecotr:(SEL)aSelector
+{
+    if ([self.delegate respondsToSelector:@selector(targetForMessageForwardingInProxy:)]) {
+        return [self.delegate targetForMessageForwardingInProxy:self];
+    }
+    if ([self.delegate conformsToProtocol:@protocol(TBTableViewBaseProxyMessageForwardProtocol)]) {
+        return (id<TBTableViewBaseProxyMessageForwardProtocol>)self.delegate;
+    }
+    return nil;
 }
 
 #pragma mark - - private

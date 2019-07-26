@@ -8,19 +8,43 @@
 
 #import "TBTableViewBaseProxyBlock.h"
 
-@implementation TBTableViewBaseProxyBlock
+@interface TBTableViewBaseProxyBlock ()
 
-- (instancetype)initWithTableView:(UITableView *)tableView
+@property (nonatomic, weak) id<TBTableViewBaseProxyMessageForwardProtocol> messageTarget;
+
+@end
+
+@implementation TBTableViewBaseProxyBlock
+@synthesize tableView = _tableView;
+
+- (instancetype)initWithTableView:(UITableView *)tableView messageTarget:(id<TBTableViewBaseProxyMessageForwardProtocol>)messageTarget
 {
     if (self = [super init]) {
+        self.messageTarget = messageTarget;
+        _tableView = tableView;
         tableView.tb_proxy.strongDelegate = self;
     }
     return self;
 }
 
+- (instancetype)initWithTableView:(UITableView *)tableView
+{
+    return [self initWithTableView:tableView messageTarget:nil];
+}
+
 + (instancetype)proxyBlockWithTableView:(UITableView *)tableView
 {
-    return [[self alloc] initWithTableView:tableView];
+    return [self proxyBlockWithTableView:tableView messageTarget:nil];
+}
+
++ (instancetype)proxyBlockWithTableView:(UITableView *)tableView messageTarget:(id<TBTableViewBaseProxyMessageForwardProtocol>)messageTarget
+{
+    return [self.alloc initWithTableView:tableView messageTarget:messageTarget];
+}
+
+- (TBTableViewBaseProxy *)proxy
+{
+    return self.tableView.tb_proxy;
 }
 
 #pragma mark - - TBTableViewBaseProxyDelegate
@@ -61,6 +85,11 @@
     if (self.willUseCellModel) {
         self.willUseCellModel(proxy, model, indexPath);
     }
+}
+
+- (id<TBTableViewBaseProxyMessageForwardProtocol>)targetForMessageForwardingInProxy:(TBTableViewBaseProxy *)proxy
+{
+    return self.messageTarget;
 }
 
 // required

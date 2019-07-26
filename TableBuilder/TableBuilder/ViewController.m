@@ -26,7 +26,7 @@
 
 #import "TBTableViewBaseProxyBlock.h"
 
-@interface ViewController () </*TBTableViewBaseProxyDelegate,*/ TBTableViewCellDelegate>
+@interface ViewController () </*TBTableViewBaseProxyDelegate,*/ TBTableViewCellDelegate, TBTableViewBaseProxyMessageForwardProtocol>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 //@property (nonatomic, strong) TBTableViewBaseProxy *tableProxy;
@@ -39,6 +39,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    if ([self conformsToProtocol:@protocol(TBTableViewBaseProxyMessageForwardProtocol)]) {
+        NSLog(@"00000000");
+    }
     
     TableViewCellModel0 *m0 = TableViewCellModel0.new;
     m0.title = @"家庭是指婚姻关系、血缘关系或收养关系基础上产生的，亲属之间所构成的社会生活单位。 [1]  家庭是幸福生活的一种存在。";
@@ -88,7 +92,7 @@
 //    self.tableProxy = [TBTableViewBaseProxy proxyWithTableView:self.tableView];
 //    self.tableProxy.delegate = self;
     
-    TBTableViewBaseProxyBlock *proxyBlock = [TBTableViewBaseProxyBlock proxyBlockWithTableView:self.tableView];
+    TBTableViewBaseProxyBlock *proxyBlock = [TBTableViewBaseProxyBlock proxyBlockWithTableView:self.tableView messageTarget:self];
     
     __weak typeof(self) ws = self;
     proxyBlock.numberOfSections = ^NSInteger(TBTableViewBaseProxy *proxy) {
@@ -131,8 +135,19 @@
         return model;
     };
     proxyBlock.willUseCellModel = ^(TBTableViewBaseProxy *proxy, NSObject *model, NSIndexPath *indexPath) {
-        NSLog(@"willUseCellModel: %@, indexPath: %@", model, indexPath);
+//        NSLog(@"willUseCellModel: %@, indexPath: %@", model, indexPath);
     };
+}
+
+#pragma mark - - TBTableViewBaseProxyMessageForwardProtocol
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    NSLog(@"%s: %@", __func__, NSStringFromCGPoint(scrollView.contentOffset));
+}
+
+- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    return @[@"A", @"B", @"C"];
 }
 
 /*
