@@ -10,9 +10,6 @@
 
 @protocol TBTableViewElement <NSObject>
 
-@required
-@property (nonatomic, strong) UIView *contentView;
-
 // 该属性用于判断当前element是否只是用于计算高度。
 // 可以根据该属性进行一些优化：
 // 比如cell上有网络图片，则可以根据是否为计算高度的cell来决定是否加载图片。
@@ -33,11 +30,16 @@
 - (CGFloat)tb_elementHeightForModel:(NSObject *)model;
 
 // 只用于 UITableViewCell
+- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
+
+
+@required
+@property (nonatomic, strong) UIView *contentView;
+
+@optional
+// 只用于 UITableViewCell
 @property(nonatomic) UITableViewCellSelectionStyle selectionStyle;
 @property(nonatomic, strong) UIView *selectedBackgroundView;
-
-// 只用于 UITableViewCell
-- (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
 
 @end
 
