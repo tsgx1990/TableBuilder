@@ -7,6 +7,7 @@
 //
 
 #import "UITableViewHeaderFooterView+TableBuilder.h"
+#import "TBTableViewElementHelper.h"
 
 @interface UITableViewHeaderFooterView ()
 

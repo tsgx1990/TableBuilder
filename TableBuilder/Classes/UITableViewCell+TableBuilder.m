@@ -7,6 +7,7 @@
 //
 
 #import "UITableViewCell+TableBuilder.h"
+#import "TBTableViewElementHelper.h"
 
 @implementation UITableViewCell (TableBuilder)
 

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TBTableViewElementHelper.h"
+#import "NSObject+TBElementModel.h"
 
 @protocol TBTableViewCellDelegate <NSObject>
 
