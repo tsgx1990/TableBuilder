@@ -49,6 +49,10 @@
     m0.subtitle = @"家庭有广义和狭义之分，狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
     m0.tb_eleColor = UIColor.purpleColor;
     m0.tb_cellSelectedColor = UIColor.orangeColor;
+    m0.tb_eleSetBlock = ^(TableViewCellModel0 *model, TableViewCell0 *element) {
+        element.titleLbl.text = model.title;
+        element.subtitleLbl.text = @"What's your problem? \nWooooo"; //model.subtitle;
+    };
     
     TableViewCellModel0 *m1 = TableViewCellModel0.new;
     m1.title = @"从社会设置来说，家庭是最基本的社会设置之一，是人类最基本最重要的一种制度和群体形式。";
@@ -149,6 +153,16 @@
 {
     return @[@"A", @"B", @"C"];
 }
+
+//- (NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return [tableView indexPathForSelectedRow];
+//}
+//
+//- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//
+//}
 
 /*
 #pragma mark - - TBTableViewBaseProxyDelegate

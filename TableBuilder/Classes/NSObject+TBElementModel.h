@@ -26,11 +26,13 @@
 // 如果设置了 tb_eleWeakDelegate，而没有设置 eleDelegate，则通过 eleDelegate 获取到的是 tb_eleWeakDelegate
 @property (nonatomic, weak) id tb_eleWeakDelegate;
 
-// 这两个属性不需要同时设置，如果不小心同时设置了，
-// 最后使用的setter优先级是 tb_eleSetter > tb_eleWeakSetter。
-// （这两个属性可以用class进行设置）
+// 以下三个属性不需要同时设置，如果不小心同时设置了，
+// 最后使用的优先级是 tb_eleSetBlock > tb_eleSetter > tb_eleWeakSetter。
+// 如果这三个属性都没有设置，element 的 tb_syncSetModel: 方法将被调用。
+// （tb_eleSetter和tb_eleWeakSetter可以用class进行设置）
 @property (nonatomic, strong) id<TBElementModelSetter> tb_eleSetter;
 @property (nonatomic, weak) id<TBElementModelSetter> tb_eleWeakSetter;
+@property (nonatomic, copy) void(^tb_eleSetBlock)(id model, id<TBTableViewElement> element);
 
 // 是否使用高度缓存。默认为 NO，即始终进行高度缓存
 @property (nonatomic, assign) BOOL tb_eleDoNotCacheHeight;

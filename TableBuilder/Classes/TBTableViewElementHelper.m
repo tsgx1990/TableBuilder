@@ -38,7 +38,11 @@
             element.selectedBackgroundView.backgroundColor = model.tb_cellSelectedColor;
         }
     }
-    if (model.tb_eleSetter) {
+    
+    if (model.tb_eleSetBlock) {
+        model.tb_eleSetBlock(model, element);
+    }
+    else if (model.tb_eleSetter) {
         if ([model.tb_eleSetter respondsToSelector:@selector(setModel:forElement:)]) {
             [model.tb_eleSetter setModel:model forElement:element];
         }

@@ -11,9 +11,6 @@
 
 @interface TableViewCell0 ()
 
-@property (weak, nonatomic) IBOutlet UILabel *titleLbl;
-@property (weak, nonatomic) IBOutlet UILabel *subtitleLbl;
-
 @end
 
 @implementation TableViewCell0

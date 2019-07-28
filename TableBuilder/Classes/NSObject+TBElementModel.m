@@ -134,6 +134,16 @@
     return wrapper.data;
 }
 
+- (void)setTb_eleSetBlock:(void (^)(id, id<TBTableViewElement>))tb_eleSetBlock
+{
+    objc_setAssociatedObject(self, @selector(tb_eleSetBlock), tb_eleSetBlock, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (void (^)(id, id<TBTableViewElement>))tb_eleSetBlock
+{
+    return objc_getAssociatedObject(self, _cmd);
+}
+
 - (void)setTb_eleDoNotCacheHeight:(BOOL)tb_eleDoNotCacheHeight
 {
     objc_setAssociatedObject(self, @selector(tb_eleDoNotCacheHeight), @(tb_eleDoNotCacheHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
