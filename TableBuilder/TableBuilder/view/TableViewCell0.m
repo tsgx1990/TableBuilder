@@ -18,6 +18,8 @@
 - (void)awakeFromNib {
     [super awakeFromNib];
     // Initialization code
+    self.tb_defaultSelectedColor = UIColor.cyanColor;
+    self.tb_defaultColor = UIColor.blackColor;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

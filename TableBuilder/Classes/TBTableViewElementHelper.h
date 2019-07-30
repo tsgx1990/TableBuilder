@@ -28,4 +28,12 @@
 
 + (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element;
 
+// 设置默认背景色
++ (void)setDefaultColor:(UIColor *)defaultColor forElement:(UIView<TBTableViewElement> *)element;
++ (UIColor *)defaultColorForElement:(UIView<TBTableViewElement> *)element;
+
+// 设置cell默认选中颜色
++ (void)setDefaultSelectedColor:(UIColor *)defaultSelectedColor forElement:(UIView<TBTableViewElement> *)element;
++ (UIColor *)defaultSelectedColorForElement:(UIView<TBTableViewElement> *)element;
+
 @end

@@ -18,6 +18,8 @@
 
 @interface UITableViewCell (TableBuilder) <TBTableViewElement>
 
+@property (nonatomic, copy) UIColor *tb_defaultSelectedColor;
+
 @property (nonatomic, readonly) id<TBTableViewCellDelegate> tb_delegate;
 
 @end

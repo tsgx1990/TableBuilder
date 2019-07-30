@@ -22,7 +22,13 @@
 @property (nonatomic, readonly) NSObject *tb_model;
 @property (nonatomic, readonly) id tb_delegate;
 
+// 设置 element 的背景色
+@property (nonatomic, copy) UIColor *tb_defaultColor;
+
 @optional
+
+// 只用于 UITableViewCell
+@property (nonatomic, copy) UIColor *tb_defaultSelectedColor;
 
 - (void)tb_syncSetModel:(NSObject *)model;
 
@@ -33,6 +39,7 @@
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
 
 
+/* **************************** */
 @required
 @property (nonatomic, strong) UIView *contentView;
 

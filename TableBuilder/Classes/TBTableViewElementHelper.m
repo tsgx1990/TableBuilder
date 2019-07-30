@@ -19,26 +19,6 @@
         element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
     }
     
-    if (!element.tb_forCalculateHeight) {
-        // 设置element的背景色
-        if (model.tb_eleColor) {
-            element.backgroundColor = element.contentView.backgroundColor = model.tb_eleColor;
-        }
-        // 设置cell的选中颜色
-        if (model.tb_cellSelectedColor
-            && [element respondsToSelector:@selector(selectedBackgroundView)]
-            && [element respondsToSelector:@selector(selectionStyle)]) {
-            
-            static void *customSelectedBackgroundViewKey = &customSelectedBackgroundViewKey;
-            if (!objc_getAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey)) {
-                element.selectedBackgroundView = UIView.new;
-                objc_setAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey, @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            }
-            element.selectionStyle = UITableViewCellSelectionStyleDefault;
-            element.selectedBackgroundView.backgroundColor = model.tb_cellSelectedColor;
-        }
-    }
-    
     if (model.tb_eleSetBlock) {
         model.tb_eleSetBlock(model, element);
     }
@@ -104,13 +84,25 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     objc_setAssociatedObject(element, _tb_elementPrevModelKey, element.tb_model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    if (model.tb_eleSetSync || element.tb_forCalculateHeight) {
+    BOOL isForCalculate = element.tb_forCalculateHeight;
+    BOOL isSyncSet = model.tb_eleSetSync;
+    if (!isForCalculate) {
+        // 同步设置element的背景色
+        UIColor *color = model.tb_eleColor ?: element.tb_defaultColor;
+        [self setColor:color forElement:element];
+    }
+    if (!isForCalculate && isSyncSet) {
+        [self setSelectedColorWithModel:model forElement:element];
+    }
+    
+    if (isSyncSet || isForCalculate) {
         [self syncSetModel:model forElement:element];
         [element setNeedsLayout];
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         if (model == element.tb_model) {
+            [self setSelectedColorWithModel:model forElement:element];
             [self syncSetModel:model forElement:element];
             [element setNeedsLayout];
         }
@@ -142,6 +134,66 @@ static void *_tb_elementIsHCalKey = &_tb_elementIsHCalKey;
 {
     NSNumber *obj = objc_getAssociatedObject(element, _tb_elementIsHCalKey);
     return !!obj;
+}
+
+#pragma mark - - color
+static void *_tb_elementDefaultColorKey = &_tb_elementDefaultColorKey;
+
++ (void)setDefaultColor:(UIColor *)defaultColor forElement:(UIView<TBTableViewElement> *)element
+{
+    objc_setAssociatedObject(element, _tb_elementDefaultColorKey, defaultColor, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [self setColor:defaultColor forElement:element];
+}
+
++ (UIColor *)defaultColorForElement:(UIView<TBTableViewElement> *)element
+{
+    return objc_getAssociatedObject(element, _tb_elementDefaultColorKey);
+}
+
++ (void)setColor:(UIColor *)color forElement:(UIView<TBTableViewElement> *)element
+{
+    if (color) {
+        element.backgroundColor = element.contentView.backgroundColor = color;
+    }
+}
+
+#pragma mark - - selected color
+static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
+
++ (void)setDefaultSelectedColor:(UIColor *)defaultSelectedColor forElement:(UIView<TBTableViewElement> *)element
+{
+    objc_setAssociatedObject(element, _tb_cellDefaultSelectedColorKey, defaultSelectedColor, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    [self setSelectedColor:defaultSelectedColor forElement:element];
+}
+
++ (UIColor *)defaultSelectedColorForElement:(UIView<TBTableViewElement> *)element
+{
+    return objc_getAssociatedObject(element, _tb_cellDefaultSelectedColorKey);
+}
+
++ (void)setSelectedColor:(UIColor *)selectedColor forElement:(UIView<TBTableViewElement> *)element
+{
+    if (selectedColor
+        && [element respondsToSelector:@selector(selectedBackgroundView)]
+        && [element respondsToSelector:@selector(selectionStyle)]) {
+        
+        static void *customSelectedBackgroundViewKey = &customSelectedBackgroundViewKey;
+        if (!objc_getAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey)) {
+            element.selectedBackgroundView = UIView.new;
+            objc_setAssociatedObject(element.selectedBackgroundView, customSelectedBackgroundViewKey, @(YES), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }
+        element.selectionStyle = UITableViewCellSelectionStyleDefault;
+        element.selectedBackgroundView.backgroundColor = selectedColor;
+    }
+}
+
+// 设置cell的选中颜色
++ (void)setSelectedColorWithModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
+{
+    if ([element respondsToSelector:@selector(setTb_defaultSelectedColor:)]) {
+        UIColor *selectedColor = model.tb_cellSelectedColor ?: element.tb_defaultSelectedColor;
+        [self setSelectedColor:selectedColor forElement:element];
+    }
 }
 
 @end

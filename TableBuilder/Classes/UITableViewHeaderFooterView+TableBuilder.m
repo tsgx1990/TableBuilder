@@ -38,4 +38,14 @@
     return [TBTableViewElementHelper isHeightCalForElement:self];
 }
 
+- (void)setTb_defaultColor:(UIColor *)tb_defaultColor
+{
+    [TBTableViewElementHelper setDefaultColor:tb_defaultColor forElement:self];
+}
+
+- (UIColor *)tb_defaultColor
+{
+    return [TBTableViewElementHelper defaultColorForElement:self];
+}
+
 @end
