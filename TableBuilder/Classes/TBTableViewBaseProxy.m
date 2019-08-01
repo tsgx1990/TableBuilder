@@ -413,9 +413,10 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
         element.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
         if (element.contentView.constraints.count > 0) {
             [element.contentView.constraints enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSLayoutConstraint *obj, NSUInteger idx, BOOL *stop) {
-                if (obj.firstItem == element.contentView && obj.firstAttribute == NSLayoutAttributeWidth) {
+                if (obj.firstItem == element.contentView
+                    && (obj.firstAttribute == NSLayoutAttributeWidth || obj.firstAttribute == NSLayoutAttributeHeight)) {
                     obj.active = NO;
-                    *stop = YES;
+                    // *stop = YES; // 某些情况下会导致无法计算高度
                 }
             }];
             NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:element.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:tableView.frame.size.width];
