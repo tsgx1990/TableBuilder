@@ -28,6 +28,11 @@
     return [TBTableViewElementHelper prevModelForElement:self];
 }
 
+- (UITableView *)tb_tableView
+{
+    return [TBTableViewElementHelper tableViewForElement:self];
+}
+
 - (id)tb_delegate
 {
     return [TBTableViewElementHelper delegateForElement:self];

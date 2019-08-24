@@ -21,6 +21,11 @@
     return [TBTableViewElementHelper prevModelForElement:self];
 }
 
+- (UITableView *)tb_tableView
+{
+    return [TBTableViewElementHelper tableViewForElement:self];
+}
+
 - (id<TBTableViewCellDelegate>)tb_delegate
 {
     return [TBTableViewElementHelper delegateForElement:self];

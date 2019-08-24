@@ -15,7 +15,9 @@
 // 比如cell上有网络图片，则可以根据是否为计算高度的cell来决定是否加载图片。
 @property (nonatomic, readonly) BOOL tb_forCalculateHeight;
 
-// element的前一个model
+@property (nonatomic, weak, readonly) UITableView *tb_tableView;
+
+// element的前一个model（考虑废弃，因为是强引用）
 @property (nonatomic, readonly) NSObject *tb_prevModel;
 
 // element的当前model

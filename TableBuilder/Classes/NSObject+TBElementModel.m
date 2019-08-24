@@ -10,17 +10,11 @@
 #import "TBTableViewElementHelper.h"
 #import <objc/runtime.h>
 
-@interface _TBElementModelWeakWrapper : NSObject
-
-@property (nonatomic, weak) id data;
-
-@end
-
-@implementation _TBElementModelWeakWrapper
+@implementation TBElementModelWeakWrapper
 
 + (instancetype)weakWithData:(id)data
 {
-    _TBElementModelWeakWrapper *wrapper = _TBElementModelWeakWrapper.new;
+    TBElementModelWeakWrapper *wrapper = TBElementModelWeakWrapper.new;
     wrapper.data = data;
     return wrapper;
 }
@@ -97,13 +91,19 @@
 
 - (void)setTb_eleWeakDelegate:(id)tb_eleWeakDelegate
 {
-    _TBElementModelWeakWrapper *wrapper = [_TBElementModelWeakWrapper weakWithData:tb_eleWeakDelegate];
-    objc_setAssociatedObject(self, @selector(tb_eleWeakDelegate), wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, @selector(tb_eleWeakDelegate));
+    if (!wrapper && tb_eleWeakDelegate) {
+        wrapper = [TBElementModelWeakWrapper weakWithData:tb_eleWeakDelegate];
+        objc_setAssociatedObject(self, @selector(tb_eleWeakDelegate), wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    else {
+        wrapper.data = tb_eleWeakDelegate;
+    }
 }
 
 - (id)tb_eleWeakDelegate
 {
-    _TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, _cmd);
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, _cmd);
     return wrapper.data;
 }
 
@@ -124,13 +124,19 @@
 
 - (void)setTb_eleWeakSetter:(id<TBElementModelSetter>)tb_eleWeakSetter
 {
-    _TBElementModelWeakWrapper *wrapper = [_TBElementModelWeakWrapper weakWithData:tb_eleWeakSetter];
-    objc_setAssociatedObject(self, @selector(tb_eleWeakSetter), wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, @selector(tb_eleWeakSetter));
+    if (!wrapper && tb_eleWeakSetter) {
+        wrapper = [TBElementModelWeakWrapper weakWithData:tb_eleWeakSetter];
+        objc_setAssociatedObject(self, @selector(tb_eleWeakSetter), wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    else {
+        wrapper.data = tb_eleWeakSetter;
+    }
 }
 
 - (id<TBElementModelSetter>)tb_eleWeakSetter
 {
-    _TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, _cmd);
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(self, _cmd);
     return wrapper.data;
 }
 
@@ -258,6 +264,13 @@
 - (void (^)(id, NSIndexPath *))tb_cellDidSelect
 {
     return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)tb_commit
+{
+    SEL aSel = @selector(updateElementWithModel:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:TBTableViewElementHelper.class selector:aSel object:self];
+    [TBTableViewElementHelper performSelector:aSel withObject:self afterDelay:0];
 }
 
 @end

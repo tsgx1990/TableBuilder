@@ -9,6 +9,14 @@
 #import <UIKit/UIKit.h>
 #import "TBTableViewElement.h"
 
+@interface TBElementModelWeakWrapper : NSObject
+
+@property (nonatomic, weak) id data;
+
++ (instancetype)weakWithData:(id)data;
+
+@end
+
 @interface NSObject (TBElementModel)
 
 // 如果不指定，默认为 self.class.tb_eleClass
@@ -71,5 +79,8 @@
 
 // 设置cell被选中时的回调，只对UITableViewCell有效
 @property (nonatomic, copy) void(^tb_cellDidSelect)(id model, NSIndexPath *indexPath);
+
+// 修改model属性之后调用该方法，将会刷新model当前所对应的element
+- (void)tb_commit;
 
 @end

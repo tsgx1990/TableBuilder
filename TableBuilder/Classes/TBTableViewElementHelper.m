@@ -14,6 +14,13 @@
 
 + (void)syncSetModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
+    BOOL isForCalculate = element.tb_forCalculateHeight;
+    if (!isForCalculate) {
+        [self setSelectedColorWithModel:model forElement:element];
+        // 将model和element关联起来
+        [self setModel:model withElement:element];
+    }
+    
     // 解决 header 或者 footer 在转屏后的自动布局问题
     if (!element.contentView.translatesAutoresizingMaskIntoConstraints) {
         element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
@@ -85,16 +92,15 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     BOOL isForCalculate = element.tb_forCalculateHeight;
-    BOOL isSyncSet = model.tb_eleSetSync;
     if (!isForCalculate) {
+        // 将element与之前的model解除关联
+        [self setModel:element.tb_prevModel withElement:nil];
         // 同步设置element的背景色
         UIColor *color = model.tb_eleColor ?: element.tb_defaultColor;
         [self setColor:color forElement:element];
     }
-    if (!isForCalculate && isSyncSet) {
-        [self setSelectedColorWithModel:model forElement:element];
-    }
     
+    BOOL isSyncSet = model.tb_eleSetSync;
     if (isSyncSet || isForCalculate) {
         [self syncSetModel:model forElement:element];
         [element setNeedsLayout];
@@ -102,7 +108,6 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         if (model == element.tb_model) {
-            [self setSelectedColorWithModel:model forElement:element];
             [self syncSetModel:model forElement:element];
             [element setNeedsLayout];
         }
@@ -120,6 +125,81 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 + (NSObject *)prevModelForElement:(UIView<TBTableViewElement> *)element
 {
     return objc_getAssociatedObject(element, _tb_elementPrevModelKey);
+}
+
+#pragma mark - - set model's element
+static void *_tb_elementForModelKey = &_tb_elementForModelKey;
+
++ (void)setModel:(NSObject *)model withElement:(UIView<TBTableViewElement> *)element
+{
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_elementForModelKey);
+    if (!wrapper && element) {
+        wrapper = [TBElementModelWeakWrapper weakWithData:element];
+        objc_setAssociatedObject(model, _tb_elementForModelKey, wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    else {
+        wrapper.data = element;
+    }
+}
+
++ (UIView<TBTableViewElement> *)elementForModel:(NSObject *)model
+{
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_elementForModelKey);
+    return wrapper.data;
+}
+
+#pragma mark - - update element
++ (void)updateElementWithModel:(NSObject *)model
+{
+    UIView<TBTableViewElement> *element = [self elementForModel:model];
+    if (!element) {
+        return;
+    }
+    [self setModel:model forElement:element];
+    SEL aSel = @selector(_reloadElementIfNeeded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:aSel object:element];
+    [self performSelector:aSel withObject:element afterDelay:0];
+}
+
++ (void)_reloadElementIfNeeded:(UIView<TBTableViewElement> *)element
+{
+    NSObject *model = element.tb_model;
+    UITableView *tableView = element.tb_tableView;
+    
+    CGFloat prevHeight = model.tb_eleHeight;
+    model.tb_eleRefreshHeightCache = YES;
+    CGFloat height = [self heightWithModel:model inTableView:tableView];
+    if (fabs(prevHeight - height) < 0.5) {
+        return;
+    }
+    // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
+    SEL aSel = @selector(reloadData);
+    [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
+    [tableView performSelector:aSel withObject:nil afterDelay:0];
+}
+
++ (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element
+{
+    if (element.tb_forCalculateHeight) {
+        return nil;
+    }
+    
+    static void *tb_elementTableViewKey = &tb_elementTableViewKey;
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(element, tb_elementTableViewKey);
+    if (!wrapper) {
+        wrapper = TBElementModelWeakWrapper.new;
+        objc_setAssociatedObject(element, tb_elementTableViewKey, wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    UITableView *tv = wrapper.data;
+    if (tv) {
+        return tv;
+    }
+    tv = (id)element.superview;
+    while (![tv isKindOfClass:UITableView.class]) {
+        tv = (id)tv.superview;
+    }
+    wrapper.data = tv;
+    return tv;
 }
 
 #pragma mark - - isForHeightCalculating
@@ -194,6 +274,176 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
         UIColor *selectedColor = model.tb_cellSelectedColor ?: element.tb_defaultSelectedColor;
         [self setSelectedColor:selectedColor forElement:element];
     }
+}
+
+#pragma mark - - calculate height
++ (CGFloat)heightWithModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    Class eleClass = model.tb_eleClass;
+    NSString *reuseID = model.tb_eleReuseID;
+    if (!eleClass || !reuseID) {
+        return 0;
+    }
+    
+    // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
+    UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
+    
+    // 如果通过model指定了element的高度，则直接返回该高度
+    if (model.tb_eleHeightIsFixed) {
+        return model.tb_eleHeight;
+    }
+    
+    // 处理不需要缓存高度的情况
+    if (model.tb_eleDoNotCacheHeight) {
+        CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
+        return eleHeight;
+    }
+    
+    NSString *tableWidthKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
+    SEL tableWidthKey = NSSelectorFromString(tableWidthKeyStr);
+    NSNumber *tableWidthObj = objc_getAssociatedObject(model, tableWidthKey);
+    
+    // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
+    if (model.tb_eleRefreshHeightCache) {
+        model.tb_eleRefreshHeightCache = NO;
+    }
+    // 如果tableView的宽度未发生改变，则直接从缓存中获取高度
+    else if (tableWidthObj && fabs(tableWidthObj.floatValue - tableView.frame.size.width) < DBL_EPSILON) {
+        return [self calculatedHeigthForModel:model];
+    }
+    
+    objc_setAssociatedObject(model, tableWidthKey, @(tableView.frame.size.width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    // 如果tableView的宽度发生了改变，element 的高度需要重新计算，并缓存到model中
+    CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
+    [self setCalculatedHeight:eleHeight forModel:model];
+    return eleHeight;
+}
+
++ (CGFloat)calHeightWithElement:(UIView<TBTableViewElement> *)element andModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
+    UIView<TBTableViewElement> *elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
+    CGFloat eleHeight = [self heightWithModel:model forElement:elementForCal];
+    return eleHeight;
+}
+
++ (UIView<TBTableViewElement> *)registerElementWithModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    Class eleClass = model.tb_eleClass;
+    NSString *reuseID = model.tb_eleReuseID;
+    
+    static void *elementRegister = &elementRegister;
+    // register elementClass or elementNib
+    NSMutableSet *reuseIDStore = objc_getAssociatedObject(tableView, elementRegister);
+    if (!reuseIDStore) {
+        reuseIDStore = [NSMutableSet setWithCapacity:3];
+        objc_setAssociatedObject(tableView, elementRegister, reuseIDStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    // 如果已经注册过，不再重复注册
+    if ([reuseIDStore containsObject:reuseID]) {
+        return nil;
+    }
+    
+    UIView<TBTableViewElement> *element = nil;
+    if (model.tb_eleUseXib) {
+        NSString *xibName = NSStringFromClass(eleClass);
+        @try {
+            element = [[NSBundle.mainBundle loadNibNamed:xibName owner:nil options:nil] lastObject];
+        } @catch (NSException *exception) {
+            // 如果 xib 文件不存在，则会抛出该异常
+            NSLog(@">>> %@", exception);
+        }
+        if (element) {
+            UINib *nib = [UINib nibWithNibName:xibName bundle:nil];
+            if ([eleClass isSubclassOfClass:UITableViewCell.class]) {
+                [tableView registerNib:nib forCellReuseIdentifier:reuseID];
+            }
+            else {
+                [tableView registerNib:nib forHeaderFooterViewReuseIdentifier:reuseID];
+            }
+        }
+    }
+    if (!element) {
+        if ([eleClass isSubclassOfClass:UITableViewCell.class]) {
+            [tableView registerClass:eleClass forCellReuseIdentifier:reuseID];
+        }
+        else {
+            [tableView registerClass:eleClass forHeaderFooterViewReuseIdentifier:reuseID];
+        }
+    }
+    [reuseIDStore addObject:reuseID];
+    return element;
+}
+
++ (UIView<TBTableViewElement> *)elementWithModel:(NSObject *)model initialElement:(UIView<TBTableViewElement> *)initialElement inTableView:(UITableView *)tableView
+{
+    Class eleClass = model.tb_eleClass;
+    NSString *reuseID = model.tb_eleReuseID;
+    
+    static void *elementCalculator = &elementCalculator;
+    NSMutableDictionary *calEleStore = objc_getAssociatedObject(tableView, elementCalculator);
+    if (!calEleStore) {
+        calEleStore = [NSMutableDictionary dictionaryWithCapacity:3];
+        objc_setAssociatedObject(tableView, elementCalculator, calEleStore, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    
+    NSArray *arr = [calEleStore valueForKey:reuseID];
+    NSNumber *storeTableWidth = arr.firstObject;
+    UIView<TBTableViewElement> *element = arr.lastObject;
+    
+    BOOL shouldUpdate = NO;
+    if (!element) {
+        shouldUpdate = YES;
+        element = initialElement;
+        if (!element && model.tb_eleUseXib) {
+            NSString *xibName = NSStringFromClass(eleClass);
+            @try {
+                element = [[NSBundle.mainBundle loadNibNamed:xibName owner:nil options:nil] lastObject];
+            } @catch (NSException *exception) {
+                NSLog(@">>> %@", exception);
+            }
+        }
+        if (!element) {
+            if ([eleClass isSubclassOfClass:UITableViewCell.class]) {
+                element = [eleClass.alloc initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseID];
+            }
+            else {
+                element = [eleClass.alloc initWithReuseIdentifier:reuseID];
+            }
+        }
+        // 在计算完 element 的高度之后，最后一次性全部移除这些用于计算高度的 element，防止不必要的内存占用
+        if (!calEleStore.count) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [calEleStore removeAllObjects];
+            });
+        }
+    }
+    if (!storeTableWidth || fabs(storeTableWidth.floatValue - tableView.frame.size.width) > DBL_EPSILON) {
+        shouldUpdate = YES;
+        element.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
+        if (element.contentView.constraints.count > 0) {
+            [element.contentView.constraints enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSLayoutConstraint *obj, NSUInteger idx, BOOL *stop) {
+                if (obj.firstItem == element.contentView
+                    && (obj.firstAttribute == NSLayoutAttributeWidth || obj.firstAttribute == NSLayoutAttributeHeight)) {
+                    obj.active = NO;
+                    // *stop = YES; // 某些情况下会导致无法计算高度
+                }
+            }];
+            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:element.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:tableView.frame.size.width];
+            if (@available(iOS 8.0, *)) {
+                widthConstraint.active = YES;
+            } else {
+                [element.contentView addConstraint:widthConstraint];
+            }
+        }
+    }
+    
+    if (shouldUpdate) {
+        arr = @[@(tableView.frame.size.width), element];
+        [calEleStore setValue:arr forKey:reuseID];
+    }
+    return element;
 }
 
 @end
