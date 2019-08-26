@@ -24,6 +24,7 @@
 
 // 刷新model对应的element
 + (void)updateElementWithModel:(NSObject *)model;
++ (void)reloadDataWithModelIfNeeded:(NSObject *)model;
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element;
 

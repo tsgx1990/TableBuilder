@@ -78,7 +78,13 @@
     m11.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。";
     m11.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
         model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
-        [model tb_commit];
+        [model tb_reload:NO];
+        [model tb_reload:YES];
+        [model tb_reload:YES];
+        [model tb_reload:NO];
+        [model tb_reload:NO];
+        [model tb_reload:NO];
+        [model tb_reload:YES];
     };
     
     TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
@@ -102,23 +108,23 @@
         
         model.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密";
         model.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
-        [model tb_commit];
+        [model tb_reload:YES];
 
         weakHm0.leftTitle = @"在父母的带领下";
         weakHm0.rightTitle = @"谢谢广大知友";
-        [weakHm0 tb_commit];
+        [weakHm0 tb_reload:YES];
         
         weakHm10.midTitle = @"中央军委无线电学校";
-        [weakHm10 tb_commit];
+        [weakHm10 tb_reload:YES];
         
         weakM11.title2 = @"目前没有有效的治疗手段，生存率极低。";
 //        weakM11.tb_eleUseXib = NO;
-        [weakM11 tb_commit];
+        [weakM11 tb_reload:YES];
     };
     
-    self.dataArr = @[@{@"head": hm0, @"data": @[m10, m1, m2]},
+    self.dataArr = @[@{@"head": hm0, @"data": @[m11, m1, m2]},
                      @{@"head": hm1, @"data": @[m0]},
-                     @{@"head": hm10, @"data": @[m11]}];
+                     @{@"head": hm10, @"data": @[m10]}];
     
 //    self.tableProxy = [TBTableViewBaseProxy proxyWithTableView:self.tableView];
 //    self.tableProxy.delegate = self;
@@ -179,6 +185,7 @@
 - (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
     return @[@"A", @"B", @"C"];
+//    return nil;
 }
 
 //- (NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath

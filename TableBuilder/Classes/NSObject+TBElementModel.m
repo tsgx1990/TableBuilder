@@ -320,11 +320,19 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)tb_commit
+- (void)tb_reload:(BOOL)reloadIfNeeded
 {
-    SEL aSel = @selector(updateElementWithModel:);
-    [NSObject cancelPreviousPerformRequestsWithTarget:TBTableViewElementHelper.class selector:aSel object:self];
-    [TBTableViewElementHelper performSelector:aSel withObject:self afterDelay:0];
+    if (!self.tb_tableView) {
+        return;
+    }
+    if (reloadIfNeeded) {
+        // 判断该model对应的element高度是否发生了变化，
+        // 如果高度发生了变化，则需要 [tableView reloadData]。
+        [TBTableViewElementHelper reloadDataWithModelIfNeeded:self];
+    }
+    else {
+        [TBTableViewElementHelper updateElementWithModel:self];
+    }
 }
 
 @end

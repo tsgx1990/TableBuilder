@@ -45,7 +45,7 @@
 // 最后使用的优先级是 tb_eleSetBlock > tb_eleSetter > tb_eleWeakSetter。
 // 如果这三个属性都没有设置，element 的 tb_syncSetModel: 方法将被调用。
 // （tb_eleSetter和tb_eleWeakSetter可以用class进行设置）
-// （如果动态修改了 setter 或 setBlock，由于这会导致UI的变化，所以需要调用 tb_commit）
+// （如果动态修改了 setter 或 setBlock，由于这会导致UI的变化，所以需要调用 tb_reload:）
 @property (nonatomic, strong) id<TBElementModelSetter> tb_eleSetter;
 @property (nonatomic, weak) id<TBElementModelSetter> tb_eleWeakSetter;
 @property (nonatomic, copy) void(^tb_eleSetBlock)(id model, id<TBTableViewElement> element);
@@ -89,7 +89,8 @@
 @property (nonatomic, copy) void(^tb_cellDidSelect)(id model, NSIndexPath *indexPath);
 
 // 修改model属性之后调用该方法，将会刷新model当前所对应的element。
-// 如果对model的修改不影响element的UI变化，则不用调用该方法。
-- (void)tb_commit;
+// 如果确定对model的修改不影响element的UI变化，则不用调用该方法。
+// 如果确定对model的修改不会影响element的高度，则 reloadIfNeeded 传 NO
+- (void)tb_reload:(BOOL)reloadIfNeeded;
 
 @end

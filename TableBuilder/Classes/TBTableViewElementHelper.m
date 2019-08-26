@@ -172,23 +172,34 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 #pragma mark - - update element
 + (void)updateElementWithModel:(NSObject *)model
 {
-    if (!model.tb_tableView) {
-        return;
-    }
+    [self _cancelUpdateElementWithModel:model];
+    [self performSelector:@selector(_updateElementWithModel:) withObject:model afterDelay:0];
+}
+
++ (void)_updateElementWithModel:(NSObject *)model
+{
     UIView<TBTableViewElement> *element = model.tb_element;
-    // 如果 element == nil，说明model相关的element未显示出来；
-    // 但是这时仍然需要判断该model对应的element高度是否发生了变化；
-    // 如果高度发生了变化，则需要 [tableView reloadData]。
+    // 如果 element == nil，说明model相关的element未显示出来
     if (element) {
         assert(model.tb_eleClass == element.class);
         [self setModel:model forElement:element];
     }
-    SEL aSel = @selector(_reloadDataWithModelIfNeeded:);
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:aSel object:model];
-    [self performSelector:aSel withObject:model afterDelay:0];
+}
+
++ (void)_cancelUpdateElementWithModel:(NSObject *)model
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateElementWithModel:) object:model];
 }
 
 // 如果model的改变引起element的高度变化，则需要 [tableView reloadData]
++ (void)reloadDataWithModelIfNeeded:(NSObject *)model
+{
+    [self _cancelUpdateElementWithModel:model];
+    SEL reloadSel = @selector(_reloadDataWithModelIfNeeded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:reloadSel object:model];
+    [self performSelector:reloadSel withObject:model afterDelay:0];
+}
+
 + (void)_reloadDataWithModelIfNeeded:(NSObject *)model
 {
     UITableView *tableView = model.tb_tableView;
@@ -198,17 +209,16 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
     CGFloat prevHeight = model.tb_eleHeight;
     model.tb_eleRefreshHeightCache = YES;
     CGFloat height = [self heightWithModel:model inTableView:tableView];
-    if (fabs(prevHeight - height) >= 0.5) {
-        [self _reloadTableView:tableView];
+    if (fabs(prevHeight - height) < 0.5) {
+        [self updateElementWithModel:model];
     }
-}
-
-+ (void)_reloadTableView:(UITableView *)tableView
-{
-    // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
-    SEL aSel = @selector(reloadData);
-    [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
-    [tableView performSelector:aSel withObject:nil afterDelay:0];
+    else {
+        [self _cancelUpdateElementWithModel:model];
+        // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
+        SEL aSel = @selector(reloadData);
+        [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
+        [tableView performSelector:aSel withObject:nil afterDelay:0];
+    }
 }
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element
@@ -340,7 +350,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
         model.tb_eleRefreshHeightCache = NO;
     }
     // 如果tableView的宽度未发生改变，则直接从缓存中获取高度
-    else if (tableWidthObj && fabs(tableWidthObj.floatValue - tableView.frame.size.width) < DBL_EPSILON) {
+    else if (tableWidthObj && fabs(tableWidthObj.floatValue - tableView.frame.size.width) <= DBL_EPSILON) {
         return [self calculatedHeigthForModel:model];
     }
     
@@ -453,7 +463,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     }
     if (!storeTableWidth || fabs(storeTableWidth.floatValue - tableView.frame.size.width) > DBL_EPSILON) {
         shouldUpdate = YES;
-        element.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
+        element.contentView.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
         if (element.contentView.constraints.count > 0) {
             [element.contentView.constraints enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSLayoutConstraint *obj, NSUInteger idx, BOOL *stop) {
                 if (obj.firstItem == element.contentView
