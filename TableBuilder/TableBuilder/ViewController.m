@@ -71,12 +71,6 @@
     m10.title1 = @"从关系来说，家庭是由具有婚姻、血缘和收养关系的人们长期居住的共同群体。满足经济合作的人类亲密关系的基本单位。";
     m10.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。满足经济合作的人类亲密关系的基本单位。";
     m10.tb_eleSetSync = YES;
-    m10.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
-        model.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密";
-//        model.title1 = @"家庭";
-        model.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
-        [model tb_commit];
-    };
     
     TableViewCellModel1 *m11 = TableViewCellModel1.new;
     m11.title0 = @"检查出滑膜肉瘤之后，学校曾经组织了募捐活动，在学校食堂放置了几处募捐箱，筹集了8万元钱，也有人进行义卖筹钱。所做的这一切都是希望能够帮助挽回年轻的生命，结果却是未能如愿。";
@@ -99,6 +93,28 @@
     hm10.leftTitle = @"1966年转为地方建制，1988年定名为西安电子科技大学。";
     hm10.midTitle = @"学校前身是1931年诞生于江西瑞金的中央军委无线电学校，是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。";
     hm10.rightTitle = @"产生了120多位解放军将领，成长起了19位两院院士。";
+    
+    // 测试model改变，element自动刷新问题
+    __weak typeof(hm0) weakHm0 = hm0;
+    __weak typeof(hm10) weakHm10 = hm10;
+    __weak typeof(m11) weakM11 = m11;
+    m10.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
+        
+        model.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密";
+        model.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
+        [model tb_commit];
+
+        weakHm0.leftTitle = @"在父母的带领下";
+        weakHm0.rightTitle = @"谢谢广大知友";
+        [weakHm0 tb_commit];
+        
+        weakHm10.midTitle = @"中央军委无线电学校";
+        [weakHm10 tb_commit];
+        
+        weakM11.title2 = @"目前没有有效的治疗手段，生存率极低。";
+//        weakM11.tb_eleUseXib = NO;
+        [weakM11 tb_commit];
+    };
     
     self.dataArr = @[@{@"head": hm0, @"data": @[m10, m1, m2]},
                      @{@"head": hm1, @"data": @[m0]},

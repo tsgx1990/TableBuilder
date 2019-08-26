@@ -88,6 +88,9 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
 
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
+    if (!model || !element) {
+        return;
+    }
     objc_setAssociatedObject(element, _tb_elementPrevModelKey, element.tb_model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
@@ -127,9 +130,8 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     return objc_getAssociatedObject(element, _tb_elementPrevModelKey);
 }
 
-#pragma mark - - set model's element
+#pragma mark - - set model's element and tableView
 static void *_tb_elementForModelKey = &_tb_elementForModelKey;
-
 + (void)setModel:(NSObject *)model withElement:(UIView<TBTableViewElement> *)element
 {
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_elementForModelKey);
@@ -148,30 +150,61 @@ static void *_tb_elementForModelKey = &_tb_elementForModelKey;
     return wrapper.data;
 }
 
+static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
++ (void)setModel:(NSObject *)model withTableView:(UITableView *)tableView
+{
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
+    if (!wrapper && tableView) {
+        wrapper = [TBElementModelWeakWrapper weakWithData:tableView];
+        objc_setAssociatedObject(model, _tb_tableViewForModelKey, wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    else {
+        wrapper.data = tableView;
+    }
+}
+
++ (UITableView *)tableViewForModel:(NSObject *)model
+{
+    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
+    return wrapper.data;
+}
+
 #pragma mark - - update element
 + (void)updateElementWithModel:(NSObject *)model
 {
-    UIView<TBTableViewElement> *element = [self elementForModel:model];
-    if (!element) {
+    if (!model.tb_tableView) {
         return;
     }
-    [self setModel:model forElement:element];
-    SEL aSel = @selector(_reloadElementIfNeeded:);
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:aSel object:element];
-    [self performSelector:aSel withObject:element afterDelay:0];
+    UIView<TBTableViewElement> *element = model.tb_element;
+    // 如果 element == nil，说明model相关的element未显示出来；
+    // 但是这时仍然需要判断该model对应的element高度是否发生了变化；
+    // 如果高度发生了变化，则需要 [tableView reloadData]。
+    if (element) {
+        assert(model.tb_eleClass == element.class);
+        [self setModel:model forElement:element];
+    }
+    SEL aSel = @selector(_reloadDataWithModelIfNeeded:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:aSel object:model];
+    [self performSelector:aSel withObject:model afterDelay:0];
 }
 
-+ (void)_reloadElementIfNeeded:(UIView<TBTableViewElement> *)element
+// 如果model的改变引起element的高度变化，则需要 [tableView reloadData]
++ (void)_reloadDataWithModelIfNeeded:(NSObject *)model
 {
-    NSObject *model = element.tb_model;
-    UITableView *tableView = element.tb_tableView;
-    
+    UITableView *tableView = model.tb_tableView;
+    if (!tableView) {
+        return;
+    }
     CGFloat prevHeight = model.tb_eleHeight;
     model.tb_eleRefreshHeightCache = YES;
     CGFloat height = [self heightWithModel:model inTableView:tableView];
-    if (fabs(prevHeight - height) < 0.5) {
-        return;
+    if (fabs(prevHeight - height) >= 0.5) {
+        [self _reloadTableView:tableView];
     }
+}
+
++ (void)_reloadTableView:(UITableView *)tableView
+{
     // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
     SEL aSel = @selector(reloadData);
     [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
@@ -180,10 +213,6 @@ static void *_tb_elementForModelKey = &_tb_elementForModelKey;
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element
 {
-    if (element.tb_forCalculateHeight) {
-        return nil;
-    }
-    
     static void *tb_elementTableViewKey = &tb_elementTableViewKey;
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(element, tb_elementTableViewKey);
     if (!wrapper) {
@@ -284,6 +313,9 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     if (!eleClass || !reuseID) {
         return 0;
     }
+    
+    // 设置model所对应的tableView
+    [self setModel:model withTableView:tableView];
     
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];

@@ -23,8 +23,23 @@
 
 @implementation NSObject (TBElementModel)
 
+- (UITableView *)tb_tableView
+{
+    return [TBTableViewElementHelper tableViewForModel:self];
+}
+
+- (UIView<TBTableViewElement> *)tb_element
+{
+    return [TBTableViewElementHelper elementForModel:self];
+}
+
 - (void)setTb_eleClass:(Class)tb_eleClass
 {
+    Class eleClass = objc_getAssociatedObject(self, @selector(tb_eleClass));
+    if (eleClass && eleClass == tb_eleClass) {
+        return;
+    }
+    assert(!eleClass && tb_eleClass);
     objc_setAssociatedObject(self, @selector(tb_eleClass), tb_eleClass, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
@@ -35,37 +50,65 @@
         return eleClass;
     }
     else {
-        return self.class.tb_eleClass;
+        eleClass = self.class.tb_eleClass;
+        assert(eleClass);
+        self.tb_eleClass = eleClass;
+        return eleClass;
     }
 }
 
 - (void)setTb_eleReuseID:(NSString *)tb_eleReuseID
 {
+    NSString *reuseID = objc_getAssociatedObject(self, @selector(tb_eleReuseID));
+    if (reuseID && [reuseID isEqualToString:tb_eleReuseID]) {
+        return;
+    }
+    assert(!reuseID && !!tb_eleReuseID.length);
     objc_setAssociatedObject(self, @selector(tb_eleReuseID), tb_eleReuseID, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 - (NSString *)tb_eleReuseID
 {
     NSString *reuseID = objc_getAssociatedObject(self, _cmd);
-    if (!reuseID) {
-        reuseID = NSStringFromClass(self.tb_eleClass);
+    if (reuseID) {
+        return reuseID;
     }
-    return reuseID;
+    else {
+        reuseID = NSStringFromClass(self.tb_eleClass);
+        self.tb_eleReuseID = reuseID;
+        return reuseID;
+    }
 }
 
 - (void)setTb_eleUseXib:(BOOL)tb_eleUseXib
 {
+    NSNumber *useXibObj = objc_getAssociatedObject(self, @selector(tb_eleUseXib));
+    if (useXibObj && useXibObj.boolValue == tb_eleUseXib) {
+        return;
+    }
+    assert(!useXibObj);
     objc_setAssociatedObject(self, @selector(tb_eleUseXib), @(tb_eleUseXib), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 - (BOOL)tb_eleUseXib
 {
     NSNumber *useXibObj = objc_getAssociatedObject(self, _cmd);
-    return useXibObj.boolValue;
+    if (useXibObj) {
+        return useXibObj.boolValue;
+    }
+    else {
+        self.tb_eleUseXib = NO;
+        return NO;
+    }
 }
 
 + (void)setTb_eleClass:(Class)tb_eleClass
 {
+    Class eleClass = objc_getAssociatedObject(self, @selector(tb_eleClass));
+    if (eleClass && eleClass == tb_eleClass) {
+        return;
+    }
+    assert(!eleClass && tb_eleClass);
     objc_setAssociatedObject(self, @selector(tb_eleClass), tb_eleClass, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
@@ -228,13 +271,24 @@
 
 - (void)setTb_eleUseManualHeight:(BOOL)tb_eleUseManualHeight
 {
+    NSNumber *obj = objc_getAssociatedObject(self,  @selector(tb_eleUseManualHeight));
+    if (obj && obj.boolValue == tb_eleUseManualHeight) {
+        return;
+    }
+    assert(!obj);
     objc_setAssociatedObject(self, @selector(tb_eleUseManualHeight), @(tb_eleUseManualHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 - (BOOL)tb_eleUseManualHeight
 {
     NSNumber *obj = objc_getAssociatedObject(self, _cmd);
-    return obj.boolValue;
+    if (obj) {
+        return obj.boolValue;
+    }
+    else {
+        self.tb_eleUseManualHeight = NO;
+        return NO;
+    }
 }
 
 - (void)setTb_cellDeselectRow:(void (^)(UITableView *, NSIndexPath *))tb_cellDeselectRow

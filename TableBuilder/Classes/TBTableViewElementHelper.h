@@ -27,6 +27,10 @@
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element;
 
++ (UIView<TBTableViewElement> *)elementForModel:(NSObject *)model;
+
++ (UITableView *)tableViewForModel:(NSObject *)model;
+
 + (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element;
 
 // 设置默认背景色
