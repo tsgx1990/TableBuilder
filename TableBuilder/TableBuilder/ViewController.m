@@ -40,6 +40,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+//    [self.tableView setEditing:YES animated:YES];
+
+    
     if ([self conformsToProtocol:@protocol(TBTableViewBaseProxyMessageForwardProtocol)]) {
         NSLog(@"00000000");
     }
@@ -76,15 +79,18 @@
     m11.title0 = @"检查出滑膜肉瘤之后，学校曾经组织了募捐活动，在学校食堂放置了几处募捐箱，筹集了8万元钱，也有人进行义卖筹钱。所做的这一切都是希望能够帮助挽回年轻的生命，结果却是未能如愿。";
     m11.title1 = @"2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。";
     m11.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。";
+    
     m11.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
-        model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
-        [model tb_reload:NO];
-        [model tb_reload:YES];
-        [model tb_reload:YES];
-        [model tb_reload:NO];
-        [model tb_reload:NO];
-        [model tb_reload:NO];
-        [model tb_reload:YES];
+//        model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
+//        [model tb_reload:NO];
+//        [model tb_reload:YES];
+//        [model tb_reload:YES];
+//        [model tb_reload:NO];
+//        [model tb_reload:NO];
+//        [model tb_reload:NO];
+//        [model tb_reload:YES];
+        
+        [self.tableView reloadSectionIndexTitles];
     };
     
     TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
@@ -106,20 +112,29 @@
     __weak typeof(m11) weakM11 = m11;
     m10.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
         
-        model.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密";
-        model.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
-        [model tb_reload:YES];
-
-        weakHm0.leftTitle = @"在父母的带领下";
-        weakHm0.rightTitle = @"谢谢广大知友";
-        [weakHm0 tb_reload:YES];
+//        model.title0 = @"满足经济合作的人类亲密关系的基本单位。满足经济合作的人类亲密";
+//        model.title2 = @"狭义是指一夫一妻制构成的社会单元；广义的则泛指人类进化的不同阶段上的各种家庭利益集团即家族。";
+//        [model tb_reload:YES];
+//
+//        weakHm0.leftTitle = @"在父母的带领下";
+//        weakHm0.rightTitle = @"谢谢广大知友";
+//        [weakHm0 tb_reload:YES];
+//
+//        weakHm10.midTitle = @"中央军委无线电学校";
+//        [weakHm10 tb_reload:YES];
+//
+//        weakM11.title2 = @"目前没有有效的治疗手段，生存率极低。";
+////        weakM11.tb_eleUseXib = NO;
+//        [weakM11 tb_reload:YES];
         
-        weakHm10.midTitle = @"中央军委无线电学校";
-        [weakHm10 tb_reload:YES];
         
-        weakM11.title2 = @"目前没有有效的治疗手段，生存率极低。";
-//        weakM11.tb_eleUseXib = NO;
-        [weakM11 tb_reload:YES];
+        [self.tableView setEditing:YES animated:YES];
+        
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [self.tableView reloadData];
+//        });
+        
+//        [self.tableView performSelector:@selector(reloadData) withObject:nil afterDelay:0.2];
     };
     
     self.dataArr = @[@{@"head": hm0, @"data": @[m11, m1, m2]},
@@ -182,10 +197,25 @@
     NSLog(@"%s: %@", __func__, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
-- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
+//- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
+//{
+//    static BOOL t = YES;
+//    if (t) {
+//        t = !t;
+//        return @[@"A", @"B", @"C"];
+//    }
+//    else {
+//        t = !t;
+//        return nil;
+//    }
+//}
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return @[@"A", @"B", @"C"];
-//    return nil;
+    if (indexPath.section == 2 && indexPath.row == 0) {
+        return YES;
+    }
+    return NO;
 }
 
 //- (NSIndexPath *)tableView:(UITableView *)tableView willDeselectRowAtIndexPath:(NSIndexPath *)indexPath

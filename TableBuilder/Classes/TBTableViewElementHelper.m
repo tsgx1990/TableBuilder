@@ -50,14 +50,17 @@
     
     if (!useManualHeight && element.contentView.constraints.count > 0) {
         CGSize size = [element.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize];
-        // +0.5 是为了解决iOS自动布局计算高度的一个bug
-        cellHeight = size.height + 0.5;
+        cellHeight = size.height;
     }
-    if (useManualHeight || cellHeight < 0.6) {
+    if (useManualHeight || cellHeight < 0.1) {
         [element setNeedsLayout];
         [element layoutIfNeeded];
         assert([element respondsToSelector:@selector(tb_elementHeightForModel:)]);
         cellHeight = [element tb_elementHeightForModel:model];
+    }
+    
+    if (model.tb_tableView.separatorStyle != UITableViewCellSeparatorStyleNone) {
+        cellHeight += 1.0 / UIScreen.mainScreen.scale;
     }
     return cellHeight;
 }

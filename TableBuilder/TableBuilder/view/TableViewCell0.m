@@ -20,6 +20,7 @@
     // Initialization code
     self.tb_defaultSelectedColor = UIColor.cyanColor;
     self.tb_defaultColor = UIColor.blackColor;
+//    self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
