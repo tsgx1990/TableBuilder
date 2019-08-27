@@ -80,6 +80,8 @@
 // 如果使用自动布局计算出的高度大于0，但不是正确的高度，则需要将该属性指定为YES；
 @property (nonatomic, assign) BOOL tb_eleUseManualHeight;   // （设置之后不能再修改）
 
+// 默认为0。表示 element 和 element.contentView 的宽度差值。
+// 修改该属性可能会影响cell的高度，所以需要调用 tb_reload:
 @property (nonatomic, assign) CGFloat tb_eleHorizontalMargin;
 
 // 在cell选中之后调用，只对UITableViewCell有效。

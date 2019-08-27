@@ -80,6 +80,7 @@
     m11.title1 = @"2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。";
     m11.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。";
     
+    m11.tb_eleHorizontalMargin = 15;
     m11.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
 //        model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
 //        [model tb_reload:NO];
@@ -90,7 +91,14 @@
 //        [model tb_reload:NO];
 //        [model tb_reload:YES];
         
-        [self.tableView reloadSectionIndexTitles];
+//        [self.tableView reloadSectionIndexTitles];
+        if (model.tb_eleHorizontalMargin == 0) {
+            model.tb_eleHorizontalMargin = 15;
+        }
+        else {
+            model.tb_eleHorizontalMargin = 0;
+        }
+        [model tb_reload:YES];
     };
     
     TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
