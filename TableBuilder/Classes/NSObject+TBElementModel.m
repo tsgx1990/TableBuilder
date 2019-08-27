@@ -293,7 +293,7 @@
 
 - (void)setTb_eleHorizontalMargin:(CGFloat)tb_eleHorizontalMargin
 {
-    objc_setAssociatedObject(self, @selector(tb_eleHorizontalMargin), @(tb_eleHorizontalMargin), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(tb_eleHorizontalMargin), @(tb_eleHorizontalMargin), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 - (CGFloat)tb_eleHorizontalMargin

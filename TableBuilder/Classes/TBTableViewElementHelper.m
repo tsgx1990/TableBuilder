@@ -503,7 +503,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     } else {
         // Fallback on earlier versions
     }
-    marginX -= model.tb_eleHorizontalMargin;
+    marginX += model.tb_eleHorizontalMargin;
     return tableView.frame.size.width - marginX;
 }
 
