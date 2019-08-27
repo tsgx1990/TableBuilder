@@ -55,8 +55,13 @@
     if (useManualHeight || cellHeight < 0.1) {
         [element setNeedsLayout];
         [element layoutIfNeeded];
-        assert([element respondsToSelector:@selector(tb_elementHeightForModel:)]);
-        cellHeight = [element tb_elementHeightForModel:model];
+        if (model.tb_eleGetHeight) {
+            cellHeight = model.tb_eleGetHeight(model);
+        }
+        else {
+            assert([element respondsToSelector:@selector(tb_elementHeightForModel:)]);
+            cellHeight = [element tb_elementHeightForModel:model];
+        }
     }
     
     if (model.tb_tableView.separatorStyle != UITableViewCellSeparatorStyleNone) {

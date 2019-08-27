@@ -249,6 +249,16 @@
     return !!obj;
 }
 
+- (void)setTb_eleGetHeight:(CGFloat (^)(id))tb_eleGetHeight
+{
+    objc_setAssociatedObject(self, @selector(tb_eleGetHeight), tb_eleGetHeight, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (CGFloat (^)(id))tb_eleGetHeight
+{
+    return objc_getAssociatedObject(self, _cmd);
+}
+
 - (void)setTb_eleColor:(UIColor *)tb_eleColor
 {
     objc_setAssociatedObject(self, @selector(tb_eleColor), tb_eleColor, OBJC_ASSOCIATION_COPY_NONATOMIC);

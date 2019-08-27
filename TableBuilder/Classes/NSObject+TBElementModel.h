@@ -69,6 +69,10 @@
 // 如果设置了tb_eleHeight，则该属性返回YES
 @property (nonatomic, assign, readonly) BOOL tb_eleHeightIsFixed;
 
+// 如果设置了该属性，在通过 autoLayout 计算高度失败的情况下，会优先从该属性中获取element高度，
+// 而element类中实现的 tb_elementHeightForModel: 方法将不起作用
+@property (nonatomic, copy) CGFloat(^tb_eleGetHeight)(id model);
+
 // 设置element的背景色
 @property (nonatomic, copy) UIColor *tb_eleColor;
 
