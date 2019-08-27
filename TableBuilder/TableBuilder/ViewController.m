@@ -197,18 +197,18 @@
     NSLog(@"%s: %@", __func__, NSStringFromCGPoint(scrollView.contentOffset));
 }
 
-//- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
-//{
-//    static BOOL t = YES;
-//    if (t) {
-//        t = !t;
-//        return @[@"A", @"B", @"C"];
-//    }
-//    else {
-//        t = !t;
-//        return nil;
-//    }
-//}
+- (NSArray<NSString *> *)sectionIndexTitlesForTableView:(UITableView *)tableView
+{
+    static BOOL t = YES;
+    if (t) {
+        t = !t;
+        return @[@"A", @"B", @"C"];
+    }
+    else {
+        t = !t;
+        return nil;
+    }
+}
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {

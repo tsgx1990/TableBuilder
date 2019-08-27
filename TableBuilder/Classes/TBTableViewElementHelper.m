@@ -344,20 +344,21 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
         return eleHeight;
     }
     
-    NSString *tableWidthKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
-    SEL tableWidthKey = NSSelectorFromString(tableWidthKeyStr);
-    NSNumber *tableWidthObj = objc_getAssociatedObject(model, tableWidthKey);
+    CGFloat contentWidth = [self contentWidthWithModel:model inTableView:tableView];
+    NSString *contentWidthKeyStr = [NSStringFromSelector(_cmd) stringByAppendingFormat:@"%p", tableView];
+    SEL contentWidthKey = NSSelectorFromString(contentWidthKeyStr);
+    NSNumber *contentWidthObj = objc_getAssociatedObject(model, contentWidthKey);
     
     // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
     if (model.tb_eleRefreshHeightCache) {
         model.tb_eleRefreshHeightCache = NO;
     }
-    // 如果tableView的宽度未发生改变，则直接从缓存中获取高度
-    else if (tableWidthObj && fabs(tableWidthObj.floatValue - tableView.frame.size.width) <= DBL_EPSILON) {
+    // 如果 contentWidth 未发生改变，则直接从缓存中获取高度
+    else if (contentWidthObj && fabs(contentWidthObj.floatValue - contentWidth) <= DBL_EPSILON) {
         return [self calculatedHeigthForModel:model];
     }
     
-    objc_setAssociatedObject(model, tableWidthKey, @(tableView.frame.size.width), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(model, contentWidthKey, @(contentWidth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     // 如果tableView的宽度发生了改变，element 的高度需要重新计算，并缓存到model中
     CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
@@ -434,7 +435,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     }
     
     NSArray *arr = [calEleStore valueForKey:reuseID];
-    NSNumber *storeTableWidth = arr.firstObject;
+    NSNumber *storeContentWidth = arr.firstObject;
     UIView<TBTableViewElement> *element = arr.lastObject;
     
     BOOL shouldUpdate = NO;
@@ -464,9 +465,11 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
             });
         }
     }
-    if (!storeTableWidth || fabs(storeTableWidth.floatValue - tableView.frame.size.width) > DBL_EPSILON) {
+    
+    CGFloat contentWidth = [self contentWidthWithModel:model inTableView:tableView];
+    if (!storeContentWidth || fabs(storeContentWidth.floatValue - contentWidth) > DBL_EPSILON) {
         shouldUpdate = YES;
-        element.contentView.frame = CGRectMake(0, 0, tableView.frame.size.width, 0);
+        element.contentView.frame = CGRectMake(0, 0, contentWidth, 0);
         if (element.contentView.constraints.count > 0) {
             [element.contentView.constraints enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSLayoutConstraint *obj, NSUInteger idx, BOOL *stop) {
                 if (obj.firstItem == element.contentView
@@ -475,7 +478,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
                     // *stop = YES; // 某些情况下会导致无法计算高度
                 }
             }];
-            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:element.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:tableView.frame.size.width];
+            NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:element.contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:0 constant:contentWidth];
             if (@available(iOS 8.0, *)) {
                 widthConstraint.active = YES;
             } else {
@@ -485,10 +488,23 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     }
     
     if (shouldUpdate) {
-        arr = @[@(tableView.frame.size.width), element];
+        arr = @[@(contentWidth), element];
         [calEleStore setValue:arr forKey:reuseID];
     }
     return element;
+}
+
++ (CGFloat)contentWidthWithModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    CGFloat marginX = 0;
+    if (@available(iOS 11.0, *)) {
+        // 主要是为了处理 X、XR、XS 系列手机横屏的情况
+        marginX = tableView.safeAreaInsets.left + tableView.safeAreaInsets.right;
+    } else {
+        // Fallback on earlier versions
+    }
+    marginX -= model.tb_eleHorizontalMargin;
+    return tableView.frame.size.width - marginX;
 }
 
 @end

@@ -80,6 +80,8 @@
 // 如果使用自动布局计算出的高度大于0，但不是正确的高度，则需要将该属性指定为YES；
 @property (nonatomic, assign) BOOL tb_eleUseManualHeight;   // （设置之后不能再修改）
 
+@property (nonatomic, assign) CGFloat tb_eleHorizontalMargin;
+
 // 在cell选中之后调用，只对UITableViewCell有效。
 // 该属性在默认情况下，cell选中后会执行 [tableView deselectRowAtIndexPath:indexPath animated:YES] 操作；
 // 如果不想在cell选中时执行上面的操作，则需要主动将该属性置为nil。
