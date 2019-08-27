@@ -38,6 +38,11 @@
 // you should override this method if you don't use autolayout
 - (CGFloat)tb_elementHeightForModel:(NSObject *)model;
 
+// 在给element正式赋值之前的预操作，此时的model尚未和element关联。
+// 子类可以实现该方法用于优化element异步赋值的视觉体验。
+// 为了防止卡顿，建议不要在该方法中进行一些耗时或者过于复杂的操作。
+- (void)tb_preprocessWithModel:(NSObject *)model;
+
 // 只用于 UITableViewCell
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
 

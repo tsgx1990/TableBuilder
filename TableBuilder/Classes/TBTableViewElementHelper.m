@@ -106,6 +106,10 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
         [self setColor:color forElement:element];
     }
     
+    if ([element respondsToSelector:@selector(tb_preprocessWithModel:)]) {
+        [element tb_preprocessWithModel:model];
+    }
+    
     BOOL isSyncSet = model.tb_eleSetSync;
     if (isSyncSet || isForCalculate) {
         [self syncSetModel:model forElement:element];
