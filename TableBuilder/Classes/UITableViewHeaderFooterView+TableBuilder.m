@@ -23,11 +23,6 @@
     return [TBTableViewElementHelper modelForElement:self];
 }
 
-- (NSObject *)tb_prevModel
-{
-    return [TBTableViewElementHelper prevModelForElement:self];
-}
-
 - (UITableView *)tb_tableView
 {
     return [TBTableViewElementHelper tableViewForElement:self];

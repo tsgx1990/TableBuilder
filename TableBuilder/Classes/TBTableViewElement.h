@@ -18,9 +18,6 @@
 // 返回element当前所在的tableView，如果element没有添加到tableView上，则返回nil
 @property (nonatomic, weak, readonly) UITableView *tb_tableView;
 
-// element的前一个model（考虑废弃，因为是强引用）
-@property (nonatomic, readonly) NSObject *tb_prevModel;
-
 // element的当前model
 @property (nonatomic, readonly) NSObject *tb_model;
 @property (nonatomic, readonly) id tb_delegate;

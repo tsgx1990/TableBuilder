@@ -45,18 +45,13 @@
 // 最后使用的优先级是 tb_eleSetBlock > tb_eleSetter > tb_eleWeakSetter。
 // 如果这三个属性都没有设置，element 的 tb_syncSetModel: 方法将被调用。
 // （tb_eleSetter和tb_eleWeakSetter可以用class进行设置）
-// （如果动态修改了 setter 或 setBlock，由于这会导致UI的变化，所以需要调用 tb_reload:）
+// （如果动态修改了 setter 或 setBlock，由于这可能导致UI的变化，所以需要调用 tb_update:）
 @property (nonatomic, strong) id<TBElementModelSetter> tb_eleSetter;
 @property (nonatomic, weak) id<TBElementModelSetter> tb_eleWeakSetter;
 @property (nonatomic, copy) void(^tb_eleSetBlock)(id model, id<TBTableViewElement> element);
 
 // 是否使用高度缓存。默认为 NO，即始终进行高度缓存
 @property (nonatomic, assign) BOOL tb_eleDoNotCacheHeight; // （设置之后仍可以修改）
-
-// 标记是否在下次 element 刷新的时候更新高度缓存
-// 如果为YES，则在 element 下次刷新的时候会重新计算高度来刷新缓存，然后自动变为NO；
-// 如果为NO，则 element 直接使用高度缓存。
-@property (nonatomic, assign) BOOL tb_eleRefreshHeightCache;
 
 // 是否同步更新 element。
 // 默认为NO，即异步更新（当element比较复杂时，异步更新可以避免列表卡顿）
@@ -85,7 +80,7 @@
 @property (nonatomic, assign) BOOL tb_eleUseManualHeight;   // （设置之后不能再修改）
 
 // 默认为0。表示 element 和 element.contentView 的宽度差值。
-// 修改该属性可能会影响cell的高度，所以需要调用 tb_reload:
+// 修改该属性可能会影响cell的高度，所以需要调用 tb_update:
 @property (nonatomic, assign) CGFloat tb_eleHorizontalMargin;
 
 // 在cell选中之后调用，只对UITableViewCell有效。
@@ -96,9 +91,21 @@
 // 设置cell被选中时的回调，只对UITableViewCell有效
 @property (nonatomic, copy) void(^tb_cellDidSelect)(id model, NSIndexPath *indexPath);
 
-// 修改model属性之后调用该方法，将会刷新model当前所对应的element。
+// 如果element的新旧model不是同一个，
+// 则在element刷新UI之前会通过该block来比较新旧model，从而决定是否刷新element；
+// 如果这个block == nil，则会通过model类的 isEqual: 方法来比较新旧model。
+// 需要注意的是，如果element的新旧model是同一个，则该block属性和isEqual:方法都不起作用。
+// （model为当前model；prevModel为element之前的model，可能为nil，也可能和model类型不同）
+@property (nonatomic, copy) BOOL(^tb_modelIsEqual)(id model, id prevModel);
+
+// 调用该方法将会使 element 在下次刷新的时候重新计算高度来刷新缓存
+- (void)tb_needRefreshHeightCache;
+
+// 修改model属性之后调用该方法，将会刷新model当前所对应的element UI。
 // 如果确定对model的修改不影响element的UI变化，则不用调用该方法。
-// 如果确定对model的修改不会影响element的高度，则 reloadIfNeeded 传 NO
-- (void)tb_reload:(BOOL)reloadIfNeeded;
+// 如果确定对model的修改不会影响element的高度，则 reloadIfNeeded 传 NO。
+// 调用该方法，将会使 model 的 needUpdate 标志置为YES。
+// (reloadIfNeeded 表示是否在 element 高度变化时 reload 整个列表)
+- (void)tb_update:(BOOL)reloadIfNeeded;
 
 @end

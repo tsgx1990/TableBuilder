@@ -204,17 +204,6 @@
     return obj.boolValue;
 }
 
-- (void)setTb_eleRefreshHeightCache:(BOOL)tb_eleRefreshHeightCache
-{
-    objc_setAssociatedObject(self, @selector(tb_eleRefreshHeightCache), @(tb_eleRefreshHeightCache), OBJC_ASSOCIATION_COPY_NONATOMIC);
-}
-
-- (BOOL)tb_eleRefreshHeightCache
-{
-    NSNumber *obj = objc_getAssociatedObject(self, _cmd);
-    return obj.boolValue;
-}
-
 - (void)setTb_eleSetSync:(BOOL)tb_eleSetSync
 {
     objc_setAssociatedObject(self, @selector(tb_eleSetSync), @(tb_eleSetSync), OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -341,14 +330,30 @@
     return objc_getAssociatedObject(self, _cmd);
 }
 
-- (void)tb_reload:(BOOL)reloadIfNeeded
+- (void)setTb_modelIsEqual:(BOOL (^)(id, id))tb_modelIsEqual
+{
+    objc_setAssociatedObject(self, @selector(tb_modelIsEqual), tb_modelIsEqual, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+- (BOOL (^)(id, id))tb_modelIsEqual
+{
+    return objc_getAssociatedObject(self, _cmd);
+}
+
+- (void)tb_needRefreshHeightCache
+{
+    [TBTableViewElementHelper setNeedRefreshHeightCache:YES forModel:self];
+}
+
+- (void)tb_update:(BOOL)reloadIfNeeded
 {
     if (!self.tb_tableView) {
         return;
     }
+    [TBTableViewElementHelper setNeedUpdateElement:YES forModel:self];
     if (reloadIfNeeded) {
         // 判断该model对应的element高度是否发生了变化，
-        // 如果高度发生了变化，则需要 [tableView reloadData]。
+        // 如果高度发生了变化，则需要 reload 整个列表。
         [TBTableViewElementHelper reloadDataWithModelIfNeeded:self];
     }
     else {

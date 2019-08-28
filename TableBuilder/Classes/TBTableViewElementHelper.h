@@ -20,7 +20,10 @@
 
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element;
 + (NSObject *)modelForElement:(UIView<TBTableViewElement> *)element;
-+ (NSObject *)prevModelForElement:(UIView<TBTableViewElement> *)element;
+
++ (void)setNeedUpdateElement:(BOOL)need forModel:(NSObject *)model;
+
++ (void)setNeedRefreshHeightCache:(BOOL)need forModel:(NSObject *)model;
 
 // 刷新model对应的element
 + (void)updateElementWithModel:(NSObject *)model;

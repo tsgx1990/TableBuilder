@@ -91,7 +91,6 @@ static void *_tb_modelCalculatedHeightKey = &_tb_modelCalculatedHeightKey;
 }
 
 #pragma mark - - setModel
-static void *_tb_elementPrevModelKey = &_tb_elementPrevModelKey;
 static void *_tb_elementModelKey = &_tb_elementModelKey;
 
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
@@ -99,13 +98,38 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     if (!model || !element) {
         return;
     }
-    objc_setAssociatedObject(element, _tb_elementPrevModelKey, element.tb_model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    NSObject *prevModel = element.tb_model;
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     BOOL isForCalculate = element.tb_forCalculateHeight;
+    // 如果新model和prevModel是同一个model，则根据model的needUpdate标志来确定是否需要更新element。
+    // 如果需要更新，则在更新element的同时把model的needUpdate标志置为NO
+    if (model == prevModel) {
+        BOOL needUpdate = [self needUpdateElementForModel:model];
+        if (!needUpdate) {
+            return;
+        }
+        if (!isForCalculate && needUpdate) {
+            [self setNeedUpdateElement:NO forModel:model];
+        }
+    }
+    // 如果新model和prevModel是不同的model，则通过比较两个model来决定是否需要刷新element
+    else {
+        BOOL isModelEqual = NO;
+        if (model.tb_modelIsEqual) {
+            isModelEqual = model.tb_modelIsEqual(model, prevModel);
+        }
+        else {
+            isModelEqual = [model isEqual:prevModel];
+        }
+        if (isModelEqual) {
+            return;
+        }
+    }
+    
     if (!isForCalculate) {
         // 将element与之前的model解除关联
-        [self setModel:element.tb_prevModel withElement:nil];
+        [self setModel:prevModel withElement:nil];
         // 同步设置element的背景色
         UIColor *color = model.tb_eleColor ?: element.tb_defaultColor;
         [self setColor:color forElement:element];
@@ -137,9 +161,34 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     return objc_getAssociatedObject(element, _tb_elementModelKey);
 }
 
-+ (NSObject *)prevModelForElement:(UIView<TBTableViewElement> *)element
+#pragma mark - - need update element
+static void *_tb_needUpdateElementKey = &_tb_needUpdateElementKey;
++ (void)setNeedUpdateElement:(BOOL)need forModel:(NSObject *)model
 {
-    return objc_getAssociatedObject(element, _tb_elementPrevModelKey);
+    objc_setAssociatedObject(model, _tb_needUpdateElementKey, @(need), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+// 默认返回YES
++ (BOOL)needUpdateElementForModel:(NSObject *)model
+{
+    NSNumber *obj = objc_getAssociatedObject(model, _tb_needUpdateElementKey);
+    if (obj) {
+        return obj.boolValue;
+    }
+    return YES;
+}
+
+#pragma mark - - need update height cache
+static void *_tb_needRefreshHeightCacheKey = &_tb_needRefreshHeightCacheKey;
++ (void)setNeedRefreshHeightCache:(BOOL)need forModel:(NSObject *)model
+{
+    objc_setAssociatedObject(model, _tb_needRefreshHeightCacheKey, @(need), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
++ (BOOL)needRefreshHeightCacheForModel:(NSObject *)model
+{
+    NSNumber *obj = objc_getAssociatedObject(model, _tb_needRefreshHeightCacheKey);
+    return obj.boolValue;
 }
 
 #pragma mark - - set model's element and tableView
@@ -218,14 +267,11 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
     if (!tableView) {
         return;
     }
+    [self updateElementWithModel:model];
     CGFloat prevHeight = model.tb_eleHeight;
-    model.tb_eleRefreshHeightCache = YES;
+    [model tb_needRefreshHeightCache];
     CGFloat height = [self heightWithModel:model inTableView:tableView];
-    if (fabs(prevHeight - height) < 0.5) {
-        [self updateElementWithModel:model];
-    }
-    else {
-        [self _cancelUpdateElementWithModel:model];
+    if (fabs(prevHeight - height) > 0.45) {
         // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
         SEL aSel = @selector(reloadData);
         [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
@@ -336,8 +382,12 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
         return 0;
     }
     
-    // 设置model所对应的tableView
-    [self setModel:model withTableView:tableView];
+    if (model.tb_tableView != tableView) {
+        // 当 model 首次次加入到 tableView 时，需要设置 needUpdate 为 YES
+        [self setNeedUpdateElement:YES forModel:model];
+        // 设置 model 所对应的 tableView
+        [self setModel:model withTableView:tableView];
+    }
     
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
@@ -359,8 +409,8 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     NSNumber *contentWidthObj = objc_getAssociatedObject(model, contentWidthKey);
     
     // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
-    if (model.tb_eleRefreshHeightCache) {
-        model.tb_eleRefreshHeightCache = NO;
+    if ([self needRefreshHeightCacheForModel:model]) {
+        [self setNeedRefreshHeightCache:NO forModel:model];
     }
     // 如果 contentWidth 未发生改变，则直接从缓存中获取高度
     else if (contentWidthObj && fabs(contentWidthObj.floatValue - contentWidth) <= DBL_EPSILON) {
