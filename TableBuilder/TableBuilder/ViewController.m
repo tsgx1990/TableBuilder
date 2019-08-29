@@ -91,6 +91,9 @@
         [model tb_update:NO];
         [model tb_update:YES];
         
+//        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+//        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0], [NSIndexPath indexPathForRow:0 inSection:1], [NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
+        
 //        // [self.tableView reloadSectionIndexTitles];
 //        if (model.tb_eleHorizontalMargin == 0) {
 //            model.tb_eleHorizontalMargin = 15;

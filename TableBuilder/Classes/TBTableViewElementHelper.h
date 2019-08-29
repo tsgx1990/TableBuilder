@@ -35,6 +35,9 @@
 
 + (UITableView *)tableViewForModel:(NSObject *)model;
 
+// 在列表每次 reload 的时候会自动调用该方法来重置它所使用的model
++ (void)clearModelStoreInTableView:(UITableView *)tableView;
+
 + (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element;
 
 // 设置默认背景色

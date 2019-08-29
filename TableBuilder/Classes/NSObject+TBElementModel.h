@@ -19,7 +19,7 @@
 
 @interface NSObject (TBElementModel)
 
-// 返回当前model所对应的tableView。只有在 [tableView reloadData] 之后才能获取到
+// 返回当前model所对应的tableView。如果model未加入到tableView中，则返回nil
 @property (nonatomic, weak, readonly) UITableView *tb_tableView;
 
 // 返回当前model所对应的element，如果没有，则返回nil。

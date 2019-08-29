@@ -212,6 +212,7 @@ static void *_tb_elementForModelKey = &_tb_elementForModelKey;
 }
 
 static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
+// 在 model 中存储一个 tableView 的弱引用
 + (void)setModel:(NSObject *)model withTableView:(UITableView *)tableView
 {
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
@@ -224,10 +225,23 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
     }
 }
 
+// 若 model 中存在一个 tableView 的弱引用，并不能确定 model 被加入到列表中，
+// 还需要判断该 model 是否存在于列表的 modelStore 中。
 + (UITableView *)tableViewForModel:(NSObject *)model
 {
+    if (!model) {
+        return nil;
+    }
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
-    return wrapper.data;
+    if (!wrapper || !wrapper.data) {
+        return nil;
+    }
+    UITableView *tableView = wrapper.data;
+    if (![self isModel:model inTableView:tableView]) {
+        wrapper.data = nil;
+        return nil;
+    }
+    return tableView;
 }
 
 #pragma mark - - update element
@@ -373,6 +387,47 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     }
 }
 
+#pragma mark - - tableView's model store
+static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
++ (void)clearModelStoreInTableView:(UITableView *)tableView
+{
+    if (tableView) {
+        NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
+        [store removeAllObjects];
+    }
+}
+
++ (void)storeModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    if (!tableView || !model) {
+        return;
+    }
+    // 如果 model 已经加入到 tableView 中，则无需重复添加
+    if (model.tb_tableView == tableView) {
+        return;
+    }
+    NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
+    if (!store) {
+        // 注意此处使用 NSPointerFunctionsObjectPointerPersonality，而不是 NSPointerFunctionsObjectPersonality，
+        // 因为如果 model 重写了 isEqual: 和 hash 方法，可能出现两个model的指针不同但是hash相同的情况。
+        store = [[NSHashTable alloc] initWithOptions:NSPointerFunctionsObjectPointerPersonality | NSPointerFunctionsWeakMemory capacity:10];
+        objc_setAssociatedObject(tableView, _tb_tableViewModelStoreKey, store, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    // 当 model 首次或重新加入到 tableView 时，需要设置它的 needUpdate 标志为 YES
+    [self setNeedUpdateElement:YES forModel:model];
+    [self setModel:model withTableView:tableView];
+    [store addObject:model];
+}
+
++ (BOOL)isModel:(NSObject *)model inTableView:(UITableView *)tableView
+{
+    if (tableView && model) {
+        NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
+        return !!store && [store containsObject:model];
+    }
+    return NO;
+}
+
 #pragma mark - - calculate height
 + (CGFloat)heightWithModel:(NSObject *)model inTableView:(UITableView *)tableView
 {
@@ -381,13 +436,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     if (!eleClass || !reuseID) {
         return 0;
     }
-    
-    if (model.tb_tableView != tableView) {
-        // 当 model 首次次加入到 tableView 时，需要设置 needUpdate 为 YES
-        [self setNeedUpdateElement:YES forModel:model];
-        // 设置 model 所对应的 tableView
-        [self setModel:model withTableView:tableView];
-    }
+    [self storeModel:model inTableView:tableView];
     
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
