@@ -8,6 +8,31 @@
 
 #import <UIKit/UIKit.h>
 
+#define _TB_CONCAT2(A, B) A ## B
+#define TB_CONCAT2(A, B) _TB_CONCAT2(A, B)
+
+#define TBRedefinePropertyType(_className, _categoryName, _properties) \
+@interface _className (TB_CONCAT2(_categoryName, __COUNTER__)) \
+    _properties   \
+@end
+
+
+/** 用于重新规定element类中 tb_model 的类型 **/
+#define TBRedefineModelType(_eleClass, _modelType) \
+    \
+TBRedefinePropertyType(     \
+    _eleClass, _tb_model_type_,    \
+    @property (nonatomic, readonly) _modelType *tb_model;    \
+)
+
+/** 用于重新规定element类中 tb_delegate 的类型 **/
+#define TBRedefineDelegateType(_eleClass, _delegateType)   \
+    \
+TBRedefinePropertyType(     \
+    _eleClass, _tb_delegate_type_,     \
+    @property (nonatomic, readonly) _delegateType tb_delegate;        \
+)
+
 @protocol TBTableViewElement <NSObject>
 
 // 该属性用于判断当前element是否只是用于计算高度。

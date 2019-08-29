@@ -7,7 +7,6 @@
 //
 
 #import "TableViewCell1.h"
-#import "TableViewCellModel1.h"
 
 @interface TableViewCell1 ()
 
@@ -32,7 +31,7 @@
 
 - (void)tb_syncSetModel:(TableViewCellModel1 *)model
 {
-    self.lbl0.text = model.title0;
+    self.lbl0.text = self.tb_model.title0;
     self.lbl1.text = model.title1;
     self.lbl2.text = model.title2;
 }

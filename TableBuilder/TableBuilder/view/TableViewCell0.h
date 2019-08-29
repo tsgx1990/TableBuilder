@@ -7,8 +7,7 @@
 //
 
 #import "UITableViewCell+TableBuilder.h"
-
-NS_ASSUME_NONNULL_BEGIN
+#import "TableViewCellModel0.h"
 
 @interface TableViewCell0 : UITableViewCell
 
@@ -17,4 +16,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
+TBRedefineModelType(TableViewCell0, TableViewCellModel0);

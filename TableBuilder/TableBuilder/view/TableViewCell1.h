@@ -7,11 +7,18 @@
 //
 
 #import "UITableViewCell+TableBuilder.h"
-
-NS_ASSUME_NONNULL_BEGIN
+#import "TableViewCellModel1.h"
 
 @interface TableViewCell1 : UITableViewCell
 
 @end
 
-NS_ASSUME_NONNULL_END
+TBRedefineModelType(TableViewCell1, TableViewCellModel1);
+// 重复定义也不会报警告
+TBRedefineModelType(TableViewCell1, TableViewCellModel1);
+
+TBRedefineDelegateType(TableViewCell1, id);
+
+
+
+

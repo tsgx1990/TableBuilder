@@ -64,7 +64,8 @@
 // 如果设置了tb_eleHeight，则该属性返回YES
 @property (nonatomic, assign, readonly) BOOL tb_eleHeightIsFixed;
 
-// 如果设置了该属性，在通过 autoLayout 计算高度失败的情况下，会优先从该属性中获取element高度，
+// 如果设置了该属性，在通过 autoLayout 计算高度失败
+// 或者在 tb_eleUseManualHeight == YES 的情况下，会优先从该属性中获取element高度，
 // 而element类中实现的 tb_elementHeightForModel: 方法将不起作用
 @property (nonatomic, copy) CGFloat(^tb_eleGetHeight)(id model);
 
@@ -75,8 +76,8 @@
 @property (nonatomic, copy) UIColor *tb_cellSelectedColor;
 
 // 默认为NO，即 优先尝试使用自动布局来计算element高度。
-// 如果为YES，element必须实现 tb_elementHeightForModel: 方法。
-// 如果使用自动布局计算出的高度大于0，但不是正确的高度，则需要将该属性指定为YES；
+// 如果为YES，则必须设置 tb_eleGetHeight 属性 或者在element中实现 tb_elementHeightForModel: 方法。
+// 如果能够确定使用自动布局计算出的高度大于0，但不是正确的高度，则需要将该属性指定为YES；
 @property (nonatomic, assign) BOOL tb_eleUseManualHeight;   // （设置之后不能再修改）
 
 // 默认为0。表示 element 和 element.contentView 的宽度差值。

@@ -23,14 +23,14 @@
     return [TBTableViewElementHelper modelForElement:self];
 }
 
-- (UITableView *)tb_tableView
-{
-    return [TBTableViewElementHelper tableViewForElement:self];
-}
-
 - (id)tb_delegate
 {
     return [TBTableViewElementHelper delegateForElement:self];
+}
+
+- (UITableView *)tb_tableView
+{
+    return [TBTableViewElementHelper tableViewForElement:self];
 }
 
 - (BOOL)tb_forCalculateHeight
