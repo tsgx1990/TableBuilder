@@ -672,6 +672,8 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     if (!storeContentWidth || fabs(storeContentWidth.floatValue - contentWidth) > DBL_EPSILON) {
         shouldUpdate = YES;
         element.contentView.frame = CGRectMake(0, 0, contentWidth, 0);
+        CGFloat elementWidth = contentWidth + model.tb_eleHorizontalMargin;
+        element.frame = CGRectMake(0, 0, elementWidth, 0);
         if (element.contentView.constraints.count > 0) {
             [element.contentView.constraints enumerateObjectsWithOptions:NSEnumerationReverse usingBlock:^(NSLayoutConstraint *obj, NSUInteger idx, BOOL *stop) {
                 if (obj.firstItem == element.contentView
