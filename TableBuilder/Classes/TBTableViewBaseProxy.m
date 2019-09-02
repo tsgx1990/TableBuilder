@@ -120,6 +120,7 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSObject *model = [self modelForRowAtIndexPath:indexPath];
+    [TBTableViewElementHelper setModel:model withIndexPath:indexPath];
     return [TBTableViewElementHelper heightWithModel:model inTableView:tableView];
 }
 
@@ -129,6 +130,7 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
         return 0;
     }
     NSObject *model = [self.delegate modelInProxy:self forHeaderInSection:section];
+    [TBTableViewElementHelper setModel:model withSection:section type:TBElementModelTypeHeader];
     return [TBTableViewElementHelper heightWithModel:model inTableView:tableView];
 }
 
@@ -138,6 +140,7 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
         return 0;
     }
     NSObject *model = [self.delegate modelInProxy:self forFooterInSection:section];
+    [TBTableViewElementHelper setModel:model withSection:section type:TBElementModelTypeFooter];
     return [TBTableViewElementHelper heightWithModel:model inTableView:tableView];
 }
 

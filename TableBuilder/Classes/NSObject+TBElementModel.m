@@ -217,7 +217,12 @@
 
 - (void)setTb_eleHeight:(CGFloat)tb_eleHeight
 {
+    CGFloat prevHeight = self.tb_eleHeight;
     objc_setAssociatedObject(self, @selector(tb_eleHeight), @(tb_eleHeight), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    // 如果修改了 eleHeight，则将该model标志为需要刷新高度
+    if (fabs(tb_eleHeight - prevHeight) > 0.1) {
+        [self tb_needRefreshHeightCache];
+    }
 }
 
 - (CGFloat)tb_eleHeight
@@ -266,6 +271,21 @@
 - (UIColor *)tb_cellSelectedColor
 {
     return objc_getAssociatedObject(self, _cmd);
+}
+
+- (TBElementModelType)tb_eleType
+{
+    return [TBTableViewElementHelper eleTypeForModel:self];
+}
+
+- (NSIndexPath *)tb_indexPath
+{
+    return [TBTableViewElementHelper indexPathForModel:self];
+}
+
+- (NSInteger)tb_section
+{
+    return [TBTableViewElementHelper sectionForModel:self];
 }
 
 - (void)setTb_eleUseManualHeight:(BOOL)tb_eleUseManualHeight
@@ -352,8 +372,8 @@
     }
     [TBTableViewElementHelper setNeedUpdateElement:YES forModel:self];
     if (reloadIfNeeded) {
-        // 判断该model对应的element高度是否发生了变化，
-        // 如果高度发生了变化，则需要 reload 整个列表。
+        // 该方法会先判断该model是否需要刷新高度缓存或者高度发生了变化，
+        // 如果是，则刷新整个列表；如果不是，则只对model对应的element重新赋值
         [TBTableViewElementHelper reloadDataWithModelIfNeeded:self];
     }
     else {

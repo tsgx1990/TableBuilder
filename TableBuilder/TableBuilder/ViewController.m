@@ -80,16 +80,40 @@
     m11.title1 = @"2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。2015年3月，休学一年的魏则西回到学校，转入计算机专业2013级2班。";
     m11.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤，目前没有有效的治疗手段，生存率极低。休学。";
     
+    TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
+    hm0.leftTitle = @"魏则西在父母的带领下先后从陕西咸阳4次前往北京治疗。";
+    hm0.rightTitle = @"“我和他妈妈谢谢广大知友对则西的关爱，希望大家关爱生命，热爱生活。”";
+    
+    TableViewHeadModel0 *hm1 = TableViewHeadModel0.new;
+    hm1.leftTitle = @"于是魏则西开始了在武警北京总队第二医院先后4次的治疗。";
+    hm1.rightTitle = @"转入计算机专业2013级2班。";
+    
+    TableViewHeadModel1 *hm10 = TableViewHeadModel1.new;
+    hm10.leftTitle = @"1966年转为地方建制，1988年定名为西安电子科技大学。";
+    hm10.midTitle = @"学校前身是1931年诞生于江西瑞金的中央军委无线电学校，是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。";
+    hm10.rightTitle = @"产生了120多位解放军将领，成长起了19位两院院士。";
+    
 //    m11.tb_eleHorizontalMargin = 15;
     m11.tb_cellDidSelect = ^(TableViewCellModel1 *model, NSIndexPath *indexPath) {
-        model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
-        [model tb_update:NO];
-        [model tb_update:YES];
-        [model tb_update:YES];
-        [model tb_update:NO];
-        [model tb_update:NO];
-        [model tb_update:NO];
-        [model tb_update:YES];
+//        model.title2 = @"2014年4月，魏则西被查出得了滑膜肉瘤。这是一种恶性软组织肿瘤";
+//        model.tb_eleHeight = 50;
+//        m1.tb_eleHeight = 80;
+//        [m1 tb_update:YES];
+        
+//        hm1.leftTitle = @"444";
+//        hm1.rightTitle = @"tttt";
+//        [hm1 tb_update:YES];
+        
+        hm1.tb_eleHeight = 44;
+        [hm1 tb_update:YES];
+        
+//        [model tb_update:NO];
+//        [model tb_update:YES];
+//        [model tb_update:YES];
+//        [model tb_update:NO];
+//        [model tb_update:NO];
+//        [model tb_update:NO];
+//        [model tb_update:YES];
         
 //        [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
 //        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:0 inSection:0], [NSIndexPath indexPathForRow:0 inSection:1], [NSIndexPath indexPathForRow:1 inSection:0]] withRowAnimation:UITableViewRowAnimationAutomatic];
@@ -103,19 +127,6 @@
 //        }
 //        [model tb_update:YES];
     };
-    
-    TableViewHeadModel0 *hm0 = TableViewHeadModel0.new;
-    hm0.leftTitle = @"魏则西在父母的带领下先后从陕西咸阳4次前往北京治疗。";
-    hm0.rightTitle = @"“我和他妈妈谢谢广大知友对则西的关爱，希望大家关爱生命，热爱生活。”";
-    
-    TableViewHeadModel0 *hm1 = TableViewHeadModel0.new;
-    hm1.leftTitle = @"于是魏则西开始了在武警北京总队第二医院先后4次的治疗。";
-    hm1.rightTitle = @"转入计算机专业2013级2班。";
-    
-    TableViewHeadModel1 *hm10 = TableViewHeadModel1.new;
-    hm10.leftTitle = @"1966年转为地方建制，1988年定名为西安电子科技大学。";
-    hm10.midTitle = @"学校前身是1931年诞生于江西瑞金的中央军委无线电学校，是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。是毛泽东等老一辈革命家亲手创建的第一所工程技术学校。";
-    hm10.rightTitle = @"产生了120多位解放军将领，成长起了19位两院院士。";
     
     // 测试model改变，element自动刷新问题
     __weak typeof(hm0) weakHm0 = hm0;

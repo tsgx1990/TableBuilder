@@ -8,7 +8,6 @@
 
 #import "TBTableViewElementHelper.h"
 #import <objc/runtime.h>
-#import "NSObject+TBElementModel.h"
 
 @implementation TBTableViewElementHelper
 
@@ -161,6 +160,61 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     return objc_getAssociatedObject(element, _tb_elementModelKey);
 }
 
+#pragma mark - - set model's indexPath or section
+static void *_tb_modelIndexPathKey = &_tb_modelIndexPathKey;
++ (void)setModel:(NSObject *)model withIndexPath:(NSIndexPath *)indexPath
+{
+    if (model) {
+        objc_setAssociatedObject(model, _tb_modelIndexPathKey, indexPath, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+}
+
++ (NSIndexPath *)indexPathForModel:(NSObject *)model
+{
+    return objc_getAssociatedObject(model, _tb_modelIndexPathKey);
+}
+
+static void *_tb_modelSectionKey = &_tb_modelSectionKey;
++ (void)setModel:(NSObject *)model withSection:(NSInteger)section type:(TBElementModelType)eleType
+{
+    if (model) {
+        objc_setAssociatedObject(model, _tb_modelSectionKey, @(section), OBJC_ASSOCIATION_COPY_NONATOMIC);
+        [self _setModel:model withType:eleType];
+    }
+}
+
++ (NSInteger)sectionForModel:(NSObject *)model
+{
+    NSNumber *obj = objc_getAssociatedObject(model, _tb_modelSectionKey);
+    if (obj) {
+        return [obj integerValue];
+    }
+    NSIndexPath *indexPath = [self indexPathForModel:model];
+    if (indexPath) {
+        return indexPath.section;
+    }
+    return NSNotFound;
+}
+
+static void *_tb_modelEleTypeKey = &_tb_modelEleTypeKey;
++ (void)_setModel:(NSObject *)model withType:(TBElementModelType)type
+{
+    assert(type == TBElementModelTypeHeader || type == TBElementModelTypeFooter);
+    objc_setAssociatedObject(model, _tb_modelEleTypeKey, @(type), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
++ (TBElementModelType)eleTypeForModel:(NSObject *)model
+{
+    if (model.tb_indexPath) {
+        return TBElementModelTypeCell;
+    }
+    NSNumber *obj = objc_getAssociatedObject(model, _tb_modelEleTypeKey);
+    if (obj) {
+        return (TBElementModelType)[obj integerValue];
+    }
+    return TBElementModelTypeUnknown;
+}
+
 #pragma mark - - need update element
 static void *_tb_needUpdateElementKey = &_tb_needUpdateElementKey;
 + (void)setNeedUpdateElement:(BOOL)need forModel:(NSObject *)model
@@ -254,7 +308,7 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 + (void)_updateElementWithModel:(NSObject *)model
 {
     UIView<TBTableViewElement> *element = model.tb_element;
-    // 如果 element == nil，说明model相关的element未显示出来
+    // 如果 element == nil，说明 model 尚未和 element 关联起来（即model尚未对element赋值）
     if (element) {
         assert(model.tb_eleClass == element.class);
         [self setModel:model forElement:element];
@@ -278,19 +332,55 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 + (void)_reloadDataWithModelIfNeeded:(NSObject *)model
 {
     UITableView *tableView = model.tb_tableView;
-    if (!tableView) {
+    if (!model || !tableView) {
         return;
     }
     [self updateElementWithModel:model];
-    CGFloat prevHeight = model.tb_eleHeight;
-    [model tb_needRefreshHeightCache];
-    CGFloat height = [self heightWithModel:model inTableView:tableView];
-    if (fabs(prevHeight - height) > 0.45) {
-        // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
-        SEL aSel = @selector(reloadData);
-        [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
-        [tableView performSelector:aSel withObject:nil afterDelay:0];
+    
+    // 如果 model.needRefreshHeightCache == YES（比如修改了 model.tb_eleHeight），则直接刷新列表
+    if ([self needRefreshHeightCacheForModel:model]) {
+        [self _delayReloadTableView:tableView];
+        return;
     }
+    [model tb_needRefreshHeightCache];
+    
+    // 不使用 model.tb_element 是因为，在 model.tb_eleSetSync == NO 的情况下，
+    // 有可能出现 element 已经显示出来，但是 model.tb_element 仍然为 nil 的情况。
+    UIView<TBTableViewElement> *element = nil;
+    TBElementModelType eleType = model.tb_eleType;
+    if (eleType == TBElementModelTypeCell) {
+        element = (id)[tableView cellForRowAtIndexPath:model.tb_indexPath];
+    }
+    else if (eleType == TBElementModelTypeHeader) {
+        element = (id)[tableView headerViewForSection:model.tb_section];
+    }
+    else if (eleType == TBElementModelTypeFooter) {
+        element = (id)[tableView footerViewForSection:model.tb_section];
+    }
+    else {
+        assert(0);
+    }
+    
+    CGFloat currHeight = model.tb_eleHeight;
+    // 如果与model对应的element高度和 model.tb_eleHeight 不相等，则需要刷新列表
+    if (element && fabs(currHeight - element.frame.size.height) > 0.1) {
+        [self _delayReloadTableView:tableView];
+        return;
+    }
+    
+    // 如果重新计算出的model高度和之前的model高度不相等，也需要刷新列表
+    CGFloat height = [self heightWithModel:model inTableView:tableView];
+    if (fabs(currHeight - height) > 0.1) {
+        [self _delayReloadTableView:tableView];
+    }
+}
+
++ (void)_delayReloadTableView:(UITableView *)tableView
+{
+    // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
+    SEL aSel = @selector(reloadData);
+    [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
+    [tableView performSelector:aSel withObject:nil afterDelay:0];
 }
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element
@@ -441,6 +531,12 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];
     
+    BOOL needRefreshHeightCache = [self needRefreshHeightCacheForModel:model];
+    // 刷新高度缓存时将该标志置为NO，为了下次获取element高度时依然使用缓存
+    if (needRefreshHeightCache) {
+        [self setNeedRefreshHeightCache:NO forModel:model];
+    }
+    
     // 如果通过model指定了element的高度，则直接返回该高度
     if (model.tb_eleHeightIsFixed) {
         return model.tb_eleHeight;
@@ -457,20 +553,16 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     SEL contentWidthKey = NSSelectorFromString(contentWidthKeyStr);
     NSNumber *contentWidthObj = objc_getAssociatedObject(model, contentWidthKey);
     
-    // 刷新高度缓存时将该标志置为NO，为了下次element刷新的时候依然使用缓存
-    if ([self needRefreshHeightCacheForModel:model]) {
-        [self setNeedRefreshHeightCache:NO forModel:model];
-    }
-    // 如果 contentWidth 未发生改变，则直接从缓存中获取高度
-    else if (contentWidthObj && fabs(contentWidthObj.floatValue - contentWidth) <= DBL_EPSILON) {
+    // 如果不需要刷新高度缓存且 contentWidth 未发生改变，则直接从缓存中获取高度
+    if (!needRefreshHeightCache
+        && contentWidthObj
+        && fabs(contentWidthObj.floatValue - contentWidth) <= DBL_EPSILON) {
         return [self calculatedHeigthForModel:model];
     }
     
     objc_setAssociatedObject(model, contentWidthKey, @(contentWidth), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    
-    // 如果tableView的宽度发生了改变，element 的高度需要重新计算，并缓存到model中
+    // 如果 contentWidth 发生了改变，element 的高度需要重新计算，并缓存到model中
     CGFloat eleHeight = [self calHeightWithElement:elementForCal andModel:model inTableView:tableView];
-    [self setCalculatedHeight:eleHeight forModel:model];
     return eleHeight;
 }
 
@@ -479,6 +571,8 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
     UIView<TBTableViewElement> *elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
     CGFloat eleHeight = [self heightWithModel:model forElement:elementForCal];
+    // 无论是否要求缓存，都将计算出的高度缓存起来，这样就可以通过 model.tb_eleHeight 获取这个高度
+    [self setCalculatedHeight:eleHeight forModel:model];
     return eleHeight;
 }
 

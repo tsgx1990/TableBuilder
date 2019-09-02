@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "TBTableViewElement.h"
 
+typedef NS_ENUM(NSInteger, TBElementModelType) {
+    TBElementModelTypeUnknown = -1,
+    TBElementModelTypeCell      = 0,
+    TBElementModelTypeHeader,
+    TBElementModelTypeFooter
+};
+
 @interface TBElementModelWeakWrapper : NSObject
 
 @property (nonatomic, weak) id data;
@@ -45,28 +52,31 @@
 // 最后使用的优先级是 tb_eleSetBlock > tb_eleSetter > tb_eleWeakSetter。
 // 如果这三个属性都没有设置，element 的 tb_syncSetModel: 方法将被调用。
 // （tb_eleSetter和tb_eleWeakSetter可以用class进行设置）
-// （如果动态修改了 setter 或 setBlock，由于这可能导致UI的变化，所以需要调用 tb_update:）
+// （如果动态修改了 setter 或 setBlock，由于这可能导致UI的变化，所以需要调用tb_update:）
 @property (nonatomic, strong) id<TBElementModelSetter> tb_eleSetter;
 @property (nonatomic, weak) id<TBElementModelSetter> tb_eleWeakSetter;
 @property (nonatomic, copy) void(^tb_eleSetBlock)(id model, id<TBTableViewElement> element);
 
-// 是否使用高度缓存。默认为 NO，即始终进行高度缓存
+// 是否使用高度缓存。默认为 NO，即始终进行高度缓存。
+// 建议在列表reload之前设置一次即可，之后不再修改。
+// 如果要更新element的高度，只需调用 [model tb_update:YES] 即可
 @property (nonatomic, assign) BOOL tb_eleDoNotCacheHeight; // （设置之后仍可以修改）
 
 // 是否同步更新 element。
 // 默认为NO，即异步更新（当element比较复杂时，异步更新可以避免列表卡顿）
 @property (nonatomic, assign) BOOL tb_eleSetSync;
 
-// 可以通过该属性指定element的高度；
-// 如果没有指定高度，可以通过该属性获取计算后的高度
+// 可以通过该属性指定element的高度；如果没有指定高度，可以通过该属性获取计算后的高度。
+// 修改该属性之后需要重新刷新列表，或者调用 [model tb_update:YES]
 @property (nonatomic, assign) CGFloat tb_eleHeight;
 
 // 如果设置了tb_eleHeight，则该属性返回YES
 @property (nonatomic, assign, readonly) BOOL tb_eleHeightIsFixed;
 
-// 如果设置了该属性，在通过 autoLayout 计算高度失败
+// 如果设置了该属性，在通过 autoLayout 计算高度失败，
 // 或者在 tb_eleUseManualHeight == YES 的情况下，会优先从该属性中获取element高度，
-// 而element类中实现的 tb_elementHeightForModel: 方法将不起作用
+// 这时在element类中实现的 tb_elementHeightForModel: 方法将不起作用。
+// 一般在列表reload之前设置一次即可。如果在列表reload之后修改，需要调用 tb_update:
 @property (nonatomic, copy) CGFloat(^tb_eleGetHeight)(id model);
 
 // 设置element的背景色
@@ -74,6 +84,16 @@
 
 // 设置cell的选中颜色，只对UITableViewCell有效
 @property (nonatomic, copy) UIColor *tb_cellSelectedColor;
+
+// 当前model所对应element的类型。
+// 如果model尚未加载到列表中，则返回 TBElementModelTypeUnknown
+@property (nonatomic, assign, readonly) TBElementModelType tb_eleType;
+
+// 当前model所对应cell的indexPath。如果不是一个cell，则返回nil
+@property (nonatomic, strong, readonly) NSIndexPath *tb_indexPath;
+
+// 当前model所对应element的section。如果是一个cell，则返回 cell 所在的 section
+@property (nonatomic, assign, readonly) NSInteger tb_section;
 
 // 默认为NO，即 优先尝试使用自动布局来计算element高度。
 // 如果为YES，则必须设置 tb_eleGetHeight 属性 或者在element中实现 tb_elementHeightForModel: 方法。
@@ -99,14 +119,16 @@
 // （model为当前model；prevModel为element之前的model，可能为nil，也可能和model类型不同）
 @property (nonatomic, copy) BOOL(^tb_modelIsEqual)(id model, id prevModel);
 
-// 调用该方法将会使 element 在下次刷新的时候重新计算高度来刷新缓存
+// 调用该方法将会使 element 在下次获取高度的时候忽略缓存，重新计算高度；
+// 如果调用了该方法，需要重新刷新列表，否则可能会因为高度的变化导致显示异常。
+// 一般情况下可以直接使用 [model tb_update:YES] 来刷新element高度
 - (void)tb_needRefreshHeightCache;
 
 // 修改model属性之后调用该方法，将会刷新model当前所对应的element UI。
-// 如果确定对model的修改不影响element的UI变化，则不用调用该方法。
+// 如果确定对model的修改不影响element的UI（包括高度）变化，则不用调用该方法。
 // 如果确定对model的修改不会影响element的高度，则 reloadIfNeeded 传 NO。
 // 调用该方法，将会使 model 的 needUpdate 标志置为YES。
-// (reloadIfNeeded 表示是否在 element 高度变化时 reload 整个列表)
+// (reloadIfNeeded 表示：通过model计算出的高度如果发生了变化是否刷新整个列表)
 - (void)tb_update:(BOOL)reloadIfNeeded;
 
 @end

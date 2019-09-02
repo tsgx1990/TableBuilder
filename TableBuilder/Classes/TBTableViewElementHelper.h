@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TBTableViewElement.h"
+#import "NSObject+TBElementModel.h"
 
 @interface TBTableViewElementHelper : NSObject
 
@@ -20,6 +20,16 @@
 
 + (void)setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element;
 + (NSObject *)modelForElement:(UIView<TBTableViewElement> *)element;
+
+// 设置model当前所在的indexPath
++ (void)setModel:(NSObject *)model withIndexPath:(NSIndexPath *)indexPath;
++ (NSIndexPath *)indexPathForModel:(NSObject *)model;
+
+// 设置（header/footer）model当前所在的section
++ (void)setModel:(NSObject *)model withSection:(NSInteger)section type:(TBElementModelType)eleType;
++ (NSInteger)sectionForModel:(NSObject *)model;
+
++ (TBElementModelType)eleTypeForModel:(NSObject *)model;
 
 + (void)setNeedUpdateElement:(BOOL)need forModel:(NSObject *)model;
 
