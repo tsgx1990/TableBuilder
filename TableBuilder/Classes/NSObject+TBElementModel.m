@@ -51,8 +51,9 @@
     }
     else {
         eleClass = self.class.tb_eleClass;
-//        assert(eleClass);
-        self.tb_eleClass = eleClass;
+        if (eleClass) {
+            self.tb_eleClass = eleClass;
+        }
         return eleClass;
     }
 }
