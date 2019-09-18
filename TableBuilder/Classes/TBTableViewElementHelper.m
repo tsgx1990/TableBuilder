@@ -321,15 +321,15 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 }
 
 // 如果model的改变引起element的高度变化，则需要 [tableView reloadData]
-+ (void)reloadDataWithModelIfNeeded:(NSObject *)model
++ (void)reloadDataIfNeededWithModel:(NSObject *)model
 {
     [self _cancelUpdateElementWithModel:model];
-    SEL reloadSel = @selector(_reloadDataWithModelIfNeeded:);
+    SEL reloadSel = @selector(_reloadDataIfNeededWithModel:);
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:reloadSel object:model];
     [self performSelector:reloadSel withObject:model afterDelay:0];
 }
 
-+ (void)_reloadDataWithModelIfNeeded:(NSObject *)model
++ (void)_reloadDataIfNeededWithModel:(NSObject *)model
 {
     UITableView *tableView = model.tb_tableView;
     if (!model || !tableView) {
@@ -378,9 +378,29 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 + (void)_delayReloadTableView:(UITableView *)tableView
 {
     // 不使用局部刷新而是采用整体刷新的原因是：tableView的局部刷新方法会创建新的cell
-    SEL aSel = @selector(reloadData);
-    [NSObject cancelPreviousPerformRequestsWithTarget:tableView selector:aSel object:nil];
-    [tableView performSelector:aSel withObject:nil afterDelay:0];
+    SEL aSel = @selector(_reloadTableView:);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:aSel object:tableView];
+    [self performSelector:aSel withObject:tableView afterDelay:0];
+}
+
++ (void)_reloadTableView:(UITableView *)tableView
+{
+    [self setNeedClearModelStore:NO inTableView:tableView];
+    [tableView reloadData];
+    [self setNeedClearModelStore:YES inTableView:tableView];
+}
+
+static void *_tb_needClearModelStoreKey = &_tb_needClearModelStoreKey;
++ (void)setNeedClearModelStore:(BOOL)need inTableView:(UITableView *)tableView
+{
+    objc_setAssociatedObject(tableView, _tb_needClearModelStoreKey, @(need), OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+// 默认返回YES
++ (BOOL)needClearModelStoreInTableView:(UITableView *)tableView
+{
+    NSNumber *obj = objc_getAssociatedObject(tableView, _tb_needClearModelStoreKey);
+    return obj ? obj.boolValue : YES;
 }
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element
@@ -481,7 +501,7 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
 static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
 + (void)clearModelStoreInTableView:(UITableView *)tableView
 {
-    if (tableView) {
+    if (tableView && [self needClearModelStoreInTableView:tableView]) {
         NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
         [store removeAllObjects];
     }

@@ -375,7 +375,7 @@
     if (reloadIfNeeded) {
         // 该方法会先判断该model是否需要刷新高度缓存或者高度发生了变化，
         // 如果是，则刷新整个列表；如果不是，则只对model对应的element重新赋值
-        [TBTableViewElementHelper reloadDataWithModelIfNeeded:self];
+        [TBTableViewElementHelper reloadDataIfNeededWithModel:self];
     }
     else {
         [TBTableViewElementHelper updateElementWithModel:self];

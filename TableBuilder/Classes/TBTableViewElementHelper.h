@@ -37,7 +37,7 @@
 
 // 刷新model对应的element
 + (void)updateElementWithModel:(NSObject *)model;
-+ (void)reloadDataWithModelIfNeeded:(NSObject *)model;
++ (void)reloadDataIfNeededWithModel:(NSObject *)model;
 
 + (UITableView *)tableViewForElement:(UIView<TBTableViewElement> *)element;
 
