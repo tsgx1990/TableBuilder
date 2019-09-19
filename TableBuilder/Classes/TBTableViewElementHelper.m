@@ -362,24 +362,36 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
         return;
     }
     [self updateElementWithModel:model];
+    BOOL isCellClass = [model.tb_eleClass isSubclassOfClass:UITableViewCell.class];
+    UIView<TBTableViewElement> *element = model.tb_element;
     
     // 如果 model.needRefreshHeightCache == YES（比如修改了 model.tb_eleHeight），则直接刷新列表
     if ([self needRefreshHeightCacheForModel:model]) {
-        [self _delayReloadTableView:tableView];
-        return;
-    }
-    [model tb_needRefreshHeightCache];
-    UIView<TBTableViewElement> *element = model.tb_element;
-    CGFloat currHeight = model.tb_eleHeight;
-    // 如果与model对应的element高度和 model.tb_eleHeight 不相等，则需要刷新列表
-    if (element && fabs(currHeight - element.frame.size.height) > 0.1) {
-        [self _delayReloadTableView:tableView];
+        // 如果element是一个 UITableViewCell 且未显示，则不需要刷新列表，只需重新计算高度
+        if (!element && isCellClass) {
+            // 重新计算 UITableViewCell 的高度并缓存起来
+            [self heightWithModel:model inTableView:tableView];
+        }
+        else {
+            [self _delayReloadTableView:tableView];
+        }
         return;
     }
     
-    // 如果重新计算出的model高度和之前的model高度不相等，也需要刷新列表
-    CGFloat height = [self heightWithModel:model inTableView:tableView];
-    if (fabs(currHeight - height) > 0.1) {
+    CGFloat prevHeight = model.tb_eleHeight;
+    [model tb_needRefreshHeightCache];
+    // 调用该方法将会重新计算model的高度，并缓存起来
+    CGFloat currHeight = [self heightWithModel:model inTableView:tableView];
+    
+    // 对于未显示出来的 UITableViewCell，就算高度发生变化也不需要刷新列表，
+    // 因为从iOS8开始，cell每次显示的时候都会尝试获取新高度。
+    if (!element && isCellClass) {
+        return;
+    }
+    
+    // 对于 header 和 footer，以及正在显示的 UITableViewCell 的处理。
+    // header和footer不会在每次显示的时候都去获取新高度，所以如果高度发生变化需要刷新列表
+    if (fabs(prevHeight - currHeight) > 0.1) {
         [self _delayReloadTableView:tableView];
     }
 }
@@ -523,7 +535,7 @@ static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
 {
     if (tableView && [self needResetReloadVersionInTableView:tableView]) {
         NSUInteger version = [self versionForReloadObject:tableView];
-        [self setVersion:++version forReloadObject:tableView];
+        [self setVersion:(version+1) forReloadObject:tableView];
     }
 }
 
@@ -542,6 +554,7 @@ static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
 }
 
 #pragma mark - - calculate height
+// 该方法将会计算model的高度，并缓存起来
 + (CGFloat)heightWithModel:(NSObject *)model inTableView:(UITableView *)tableView
 {
     Class eleClass = model.tb_eleClass;
