@@ -45,8 +45,8 @@
 
 + (UITableView *)tableViewForModel:(NSObject *)model;
 
-// 在列表每次 reload 的时候会自动调用该方法来重置它所使用的model
-+ (void)clearModelStoreInTableView:(UITableView *)tableView;
+// 在列表每次 reload 的时候会自动调用该方法来重置它的 reloadVersion
++ (void)resetTableViewReloadVersion:(UITableView *)tableView;
 
 + (BOOL)isHeightCalForElement:(UIView<TBTableViewElement> *)element;
 

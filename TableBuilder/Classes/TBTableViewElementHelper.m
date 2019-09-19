@@ -287,7 +287,6 @@ static void *_tb_needRefreshHeightCacheKey = &_tb_needRefreshHeightCacheKey;
 }
 
 #pragma mark - - set model's tableView
-
 static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 // 在 model 中存储一个 tableView 的弱引用
 + (void)setModel:(NSObject *)model withTableView:(UITableView *)tableView
@@ -300,25 +299,32 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
     else {
         wrapper.data = tableView;
     }
+    // 将 model 的 version 和 tableView 的保持一致
+    NSString *reloadVersion = [self versionForReloadObject:tableView];
+    [self setVersion:reloadVersion forReloadObject:model];
 }
 
-// 若 model 中存在一个 tableView 的弱引用，并不能确定 model 被加入到列表中，
-// 还需要判断该 model 是否存在于列表的 modelStore 中。
+// 若 model 中存在一个 tableView 的弱引用，并不能确定 model 已经加入列表，
+// 还需要判断该 model 和 tableView 的version是否一致
 + (UITableView *)tableViewForModel:(NSObject *)model
 {
-    if (!model) {
+    NSString *modelVersion = [self versionForReloadObject:model];
+    if (!model || !modelVersion) {
         return nil;
     }
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
     if (!wrapper || !wrapper.data) {
+        [self setVersion:nil forReloadObject:model];
         return nil;
     }
     UITableView *tableView = wrapper.data;
-    if (![self isModel:model inTableView:tableView]) {
-        wrapper.data = nil;
-        return nil;
+    NSString *tableVersion = [self versionForReloadObject:tableView];
+    if ([tableVersion isEqualToString:modelVersion]) {
+        return tableView;
     }
-    return tableView;
+    [self setVersion:nil forReloadObject:model];
+    wrapper.data = nil;
+    return nil;
 }
 
 #pragma mark - - update element
@@ -390,21 +396,21 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 
 + (void)_reloadTableView:(UITableView *)tableView
 {
-    [self setNeedClearModelStore:NO inTableView:tableView];
+    [self setNeedResetReloadVersion:NO inTableView:tableView];
     [tableView reloadData];
-    [self setNeedClearModelStore:YES inTableView:tableView];
+    [self setNeedResetReloadVersion:YES inTableView:tableView];
 }
 
-static void *_tb_needClearModelStoreKey = &_tb_needClearModelStoreKey;
-+ (void)setNeedClearModelStore:(BOOL)need inTableView:(UITableView *)tableView
+static void *_tb_needResetReloadVersionKey = &_tb_needResetReloadVersionKey;
++ (void)setNeedResetReloadVersion:(BOOL)need inTableView:(UITableView *)tableView
 {
-    objc_setAssociatedObject(tableView, _tb_needClearModelStoreKey, @(need), OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(tableView, _tb_needResetReloadVersionKey, @(need), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
 // 默认返回YES
-+ (BOOL)needClearModelStoreInTableView:(UITableView *)tableView
++ (BOOL)needResetReloadVersionInTableView:(UITableView *)tableView
 {
-    NSNumber *obj = objc_getAssociatedObject(tableView, _tb_needClearModelStoreKey);
+    NSNumber *obj = objc_getAssociatedObject(tableView, _tb_needResetReloadVersionKey);
     return obj ? obj.boolValue : YES;
 }
 
@@ -502,17 +508,29 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
     }
 }
 
-#pragma mark - - tableView's model store
-static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
-+ (void)clearModelStoreInTableView:(UITableView *)tableView
+#pragma mark - - tableView's reload version
+static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
+
++ (void)setVersion:(id)version forReloadObject:(id)obj
 {
-    if (tableView && [self needClearModelStoreInTableView:tableView]) {
-        NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
-        [store removeAllObjects];
+    objc_setAssociatedObject(obj, _tb_tableReloadVersionKey, version, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
++ (NSString *)versionForReloadObject:(NSObject *)obj
+{
+    return objc_getAssociatedObject(obj, _tb_tableReloadVersionKey);
+}
+
++ (void)resetTableViewReloadVersion:(UITableView *)tableView
+{
+    if (tableView && [self needResetReloadVersionInTableView:tableView]) {
+        static unsigned long count = 0;
+        NSString *version = [NSString stringWithFormat:@"%lu.%ld", count++, time(NULL) % 100000];
+        [self setVersion:version forReloadObject:tableView];
     }
 }
 
-+ (void)storeModel:(NSObject *)model inTableView:(UITableView *)tableView
++ (void)setModelIfNeeded:(NSObject *)model withTableView:(UITableView *)tableView
 {
     if (!tableView || !model) {
         return;
@@ -521,26 +539,9 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     if (model.tb_tableView == tableView) {
         return;
     }
-    NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
-    if (!store) {
-        // 注意此处使用 NSPointerFunctionsObjectPointerPersonality，而不是 NSPointerFunctionsObjectPersonality，
-        // 因为如果 model 重写了 isEqual: 和 hash 方法，可能出现两个model的指针不同但是hash相同的情况。
-        store = [[NSHashTable alloc] initWithOptions:NSPointerFunctionsObjectPointerPersonality | NSPointerFunctionsWeakMemory capacity:10];
-        objc_setAssociatedObject(tableView, _tb_tableViewModelStoreKey, store, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
     // 当 model 首次或重新加入到 tableView 时，需要设置它的 needUpdate 标志为 YES
     [self setNeedUpdateElement:YES forModel:model];
     [self setModel:model withTableView:tableView];
-    [store addObject:model];
-}
-
-+ (BOOL)isModel:(NSObject *)model inTableView:(UITableView *)tableView
-{
-    if (tableView && model) {
-        NSHashTable *store = objc_getAssociatedObject(tableView, _tb_tableViewModelStoreKey);
-        return !!store && [store containsObject:model];
-    }
-    return NO;
 }
 
 #pragma mark - - calculate height
@@ -551,7 +552,7 @@ static void *_tb_tableViewModelStoreKey = &_tb_tableViewModelStoreKey;
     if (!eleClass || !reuseID) {
         return 0;
     }
-    [self storeModel:model inTableView:tableView];
+    [self setModelIfNeeded:model withTableView:tableView];
     
     // 注册element复用标识，返回的element可以用于后续的高度计算；如果已经注册过，则返回nil
     UIView<TBTableViewElement> *elementForCal = [self registerElementWithModel:model inTableView:tableView];

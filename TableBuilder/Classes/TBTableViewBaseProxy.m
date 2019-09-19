@@ -192,7 +192,7 @@ static void *_tb_tableProxyKey = &_tb_tableProxyKey;
 #pragma mark - - UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    [TBTableViewElementHelper clearModelStoreInTableView:tableView];
+    [TBTableViewElementHelper resetTableViewReloadVersion:tableView];
     if (![self.delegate respondsToSelector:@selector(numberOfSectionsInProxy:)]) {
         return 1;
     }
