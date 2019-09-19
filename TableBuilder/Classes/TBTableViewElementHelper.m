@@ -11,35 +11,6 @@
 
 @implementation TBTableViewElementHelper
 
-+ (void)syncSetModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
-{
-    BOOL isForCalculate = element.tb_forCalculateHeight;
-    if (!isForCalculate) {
-        [self setSelectedColorWithModel:model forElement:element];
-        // 将model和element关联起来
-        [self setModel:model withElement:element];
-    }
-    
-    // 解决 header 或者 footer 在转屏后的自动布局问题
-    if (!element.contentView.translatesAutoresizingMaskIntoConstraints) {
-        element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
-    }
-    
-    if (model.tb_eleSetBlock) {
-        model.tb_eleSetBlock(model, element);
-    }
-    else if (model.tb_eleSetter) {
-        if ([model.tb_eleSetter respondsToSelector:@selector(setModel:forElement:)]) {
-            [model.tb_eleSetter setModel:model forElement:element];
-        }
-    }
-    else {
-        if ([element respondsToSelector:@selector(tb_syncSetModel:)]) {
-            [element tb_syncSetModel:model];
-        }
-    }
-}
-
 + (CGFloat)heightWithModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
 {
     [self markElementAsHeightCalculate:element];
@@ -64,7 +35,7 @@
     }
     
     if (model.tb_tableView.separatorStyle != UITableViewCellSeparatorStyleNone) {
-        cellHeight += 1.0 / UIScreen.mainScreen.scale;
+        cellHeight += (1.0 / UIScreen.mainScreen.scale);
     }
     return cellHeight;
 }
@@ -100,7 +71,6 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     NSObject *prevModel = element.tb_model;
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
-    BOOL isForCalculate = element.tb_forCalculateHeight;
     // 如果新model和prevModel是同一个model，则根据model的needUpdate标志来确定是否需要更新element。
     // 如果需要更新，则在更新element的同时把model的needUpdate标志置为NO
     if (model == prevModel) {
@@ -108,7 +78,7 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
         if (!needUpdate) {
             return;
         }
-        if (!isForCalculate && needUpdate) {
+        else if (!element.tb_forCalculateHeight) {
             [self setNeedUpdateElement:NO forModel:model];
         }
     }
@@ -125,10 +95,13 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
             return;
         }
     }
-    
+    [self _setModel:model forElement:element];
+}
+
++ (void)_setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
+{
+    BOOL isForCalculate = element.tb_forCalculateHeight;
     if (!isForCalculate) {
-        // 将element与之前的model解除关联
-        [self setModel:prevModel withElement:nil];
         // 同步设置element的背景色
         UIColor *color = model.tb_eleColor ?: element.tb_defaultColor;
         [self setColor:color forElement:element];
@@ -138,21 +111,62 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
         [element tb_preprocessWithModel:model];
     }
     
-    BOOL isSyncSet = model.tb_eleSetSync;
-    if (isSyncSet || isForCalculate) {
-        [self syncSetModel:model forElement:element];
-        [element setNeedsLayout];
+    if (isForCalculate) {
+        [self _syncSetElement:element];
+    }
+    else {
+        [self __setModel:model forElement:element];
+    }
+}
+
++ (void)__setModel:(NSObject *)model forElement:(UIView<TBTableViewElement> *)element
+{
+    // 如果正在对element用同一个model进行异步设置，则直接return
+    static void *tb_elementSettingKey = &tb_elementSettingKey;
+    NSObject *settingModel = objc_getAssociatedObject(element, tb_elementSettingKey);
+    if (settingModel == model) {
+        NSLog(@"同样的model正在对该element进行异步设置");
         return;
     }
+    if (model.tb_eleSetSync) {
+        [self _syncSetElement:element];
+        return;
+    }
+    
+    objc_setAssociatedObject(element, tb_elementSettingKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     dispatch_async(dispatch_get_main_queue(), ^{
+        objc_setAssociatedObject(element, tb_elementSettingKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         if (model == element.tb_model) {
-            [self syncSetModel:model forElement:element];
-            [element setNeedsLayout];
+            [self _syncSetElement:element];
         }
         else {
-            NSLog(@"model is changed! hehe");
+            NSLog(@"Model for this element is changed!");
         }
     });
+}
+
++ (void)_syncSetElement:(UIView<TBTableViewElement> *)element
+{
+    NSObject *model = element.tb_model;
+    if (!element.tb_forCalculateHeight) {
+        [self setSelectedColorWithModel:model forElement:element];
+    }
+    
+    // 解决 header 或者 footer 在转屏后的自动布局问题
+    if (!element.contentView.translatesAutoresizingMaskIntoConstraints) {
+        element.contentView.translatesAutoresizingMaskIntoConstraints = YES;
+    }
+    
+    if (model.tb_eleSetBlock) {
+        model.tb_eleSetBlock(model, element);
+    }
+    else if ([model.tb_eleSetter respondsToSelector:@selector(setModel:forElement:)]) {
+        [model.tb_eleSetter setModel:model forElement:element];
+    }
+    else if ([element respondsToSelector:@selector(tb_syncSetModel:)]) {
+        [element tb_syncSetModel:model];
+    }
+    [element setNeedsLayout];
 }
 
 + (NSObject *)modelForElement:(UIView<TBTableViewElement> *)element
@@ -171,7 +185,11 @@ static void *_tb_modelIndexPathKey = &_tb_modelIndexPathKey;
 
 + (NSIndexPath *)indexPathForModel:(NSObject *)model
 {
-    return objc_getAssociatedObject(model, _tb_modelIndexPathKey);
+    NSIndexPath *indexPath = objc_getAssociatedObject(model, _tb_modelIndexPathKey);
+    if (indexPath && model.tb_tableView) {
+        return indexPath;
+    }
+    return nil;
 }
 
 static void *_tb_modelSectionKey = &_tb_modelSectionKey;
@@ -186,10 +204,10 @@ static void *_tb_modelSectionKey = &_tb_modelSectionKey;
 + (NSInteger)sectionForModel:(NSObject *)model
 {
     NSNumber *obj = objc_getAssociatedObject(model, _tb_modelSectionKey);
-    if (obj) {
+    if (obj && model.tb_tableView) {
         return [obj integerValue];
     }
-    NSIndexPath *indexPath = [self indexPathForModel:model];
+    NSIndexPath *indexPath = model.tb_indexPath;
     if (indexPath) {
         return indexPath.section;
     }
@@ -205,11 +223,11 @@ static void *_tb_modelEleTypeKey = &_tb_modelEleTypeKey;
 
 + (TBElementModelType)eleTypeForModel:(NSObject *)model
 {
-    if (model.tb_indexPath) {
+    if ([model.tb_eleClass isSubclassOfClass:UITableViewCell.class]) {
         return TBElementModelTypeCell;
     }
     NSNumber *obj = objc_getAssociatedObject(model, _tb_modelEleTypeKey);
-    if (obj) {
+    if (obj && model.tb_tableView) {
         return (TBElementModelType)[obj integerValue];
     }
     return TBElementModelTypeUnknown;
@@ -245,25 +263,30 @@ static void *_tb_needRefreshHeightCacheKey = &_tb_needRefreshHeightCacheKey;
     return obj.boolValue;
 }
 
-#pragma mark - - set model's element and tableView
-static void *_tb_elementForModelKey = &_tb_elementForModelKey;
-+ (void)setModel:(NSObject *)model withElement:(UIView<TBTableViewElement> *)element
-{
-    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_elementForModelKey);
-    if (!wrapper && element) {
-        wrapper = [TBElementModelWeakWrapper weakWithData:element];
-        objc_setAssociatedObject(model, _tb_elementForModelKey, wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
-    else {
-        wrapper.data = element;
-    }
-}
-
 + (UIView<TBTableViewElement> *)elementForModel:(NSObject *)model
 {
-    TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_elementForModelKey);
-    return wrapper.data;
+    UITableView *tableView = model.tb_tableView;
+    if (!tableView) {
+        return nil;
+    }
+    UIView<TBTableViewElement> *element = nil;
+    TBElementModelType eleType = model.tb_eleType;
+    if (eleType == TBElementModelTypeCell) {
+        element = (id)[tableView cellForRowAtIndexPath:model.tb_indexPath];
+    }
+    else if (eleType == TBElementModelTypeHeader) {
+        element = (id)[tableView headerViewForSection:model.tb_section];
+    }
+    else if (eleType == TBElementModelTypeFooter) {
+        element = (id)[tableView footerViewForSection:model.tb_section];
+    }
+    else {
+        assert(0);
+    }
+    return element;
 }
+
+#pragma mark - - set model's tableView
 
 static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 // 在 model 中存储一个 tableView 的弱引用
@@ -308,7 +331,6 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
 + (void)_updateElementWithModel:(NSObject *)model
 {
     UIView<TBTableViewElement> *element = model.tb_element;
-    // 如果 element == nil，说明 model 尚未和 element 关联起来（即model尚未对element赋值）
     if (element) {
         assert(model.tb_eleClass == element.class);
         [self setModel:model forElement:element];
@@ -343,24 +365,7 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
         return;
     }
     [model tb_needRefreshHeightCache];
-    
-    // 不使用 model.tb_element 是因为，在 model.tb_eleSetSync == NO 的情况下，
-    // 有可能出现 element 已经显示出来，但是 model.tb_element 仍然为 nil 的情况。
-    UIView<TBTableViewElement> *element = nil;
-    TBElementModelType eleType = model.tb_eleType;
-    if (eleType == TBElementModelTypeCell) {
-        element = (id)[tableView cellForRowAtIndexPath:model.tb_indexPath];
-    }
-    else if (eleType == TBElementModelTypeHeader) {
-        element = (id)[tableView headerViewForSection:model.tb_section];
-    }
-    else if (eleType == TBElementModelTypeFooter) {
-        element = (id)[tableView footerViewForSection:model.tb_section];
-    }
-    else {
-        assert(0);
-    }
-    
+    UIView<TBTableViewElement> *element = model.tb_element;
     CGFloat currHeight = model.tb_eleHeight;
     // 如果与model对应的element高度和 model.tb_eleHeight 不相等，则需要刷新列表
     if (element && fabs(currHeight - element.frame.size.height) > 0.1) {
@@ -412,7 +417,7 @@ static void *_tb_needClearModelStoreKey = &_tb_needClearModelStoreKey;
         objc_setAssociatedObject(element, tb_elementTableViewKey, wrapper, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     UITableView *tv = wrapper.data;
-    if (tv) {
+    if (tv && [element isDescendantOfView:tv]) {
         return tv;
     }
     tv = (id)element.superview;

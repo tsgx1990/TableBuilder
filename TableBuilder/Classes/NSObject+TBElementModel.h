@@ -30,7 +30,8 @@ typedef NS_ENUM(NSInteger, TBElementModelType) {
 @property (nonatomic, weak, readonly) UITableView *tb_tableView;
 
 // 返回当前model所对应的element，如果没有，则返回nil。
-// 需要注意的是，如果model对应的element不可见，则由于element复用的原因，该属性也可能为nil。
+// 需要注意的是，如果model对应的element不可见，则由于element复用的原因，该属性返回nil。
+// 如果当前model未加入到tableView中，则同样返回nil。
 @property (nonatomic, weak, readonly) UIView<TBTableViewElement> *tb_element;
 
 // 如果不指定，默认为 self.class.tb_eleClass
@@ -86,13 +87,16 @@ typedef NS_ENUM(NSInteger, TBElementModelType) {
 @property (nonatomic, copy) UIColor *tb_cellSelectedColor;
 
 // 当前model所对应element的类型。
-// 如果model尚未加载到列表中，则返回 TBElementModelTypeUnknown
+// 如果确定 model.tb_eleClass 是一个 UITableViewCell，则返回 TBElementModelTypeCell；
+// 如果 model.tb_eleClass 不是一个 UITableViewCell，且model未加入到tableView中，则返回 TBElementModelTypeUnknown
 @property (nonatomic, assign, readonly) TBElementModelType tb_eleType;
 
-// 当前model所对应cell的indexPath。如果不是一个cell，则返回nil
+// 当前model所对应cell的indexPath。
+// 如果该model没有加入到tableView中，或者该model对应的不是一个cell，则返回nil。
 @property (nonatomic, strong, readonly) NSIndexPath *tb_indexPath;
 
-// 当前model所对应element的section。如果是一个cell，则返回 cell 所在的 section
+// 当前model所对应element的section。如果该model对应的是一个cell，则返回 cell 所在的 section。
+// 如果该model没有加入到tableView中，则返回 NSNotFound。
 @property (nonatomic, assign, readonly) NSInteger tb_section;
 
 // 默认为NO，即 优先尝试使用自动布局来计算element高度。
