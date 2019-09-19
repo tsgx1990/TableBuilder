@@ -300,29 +300,27 @@ static void *_tb_tableViewForModelKey = &_tb_tableViewForModelKey;
         wrapper.data = tableView;
     }
     // 将 model 的 version 和 tableView 的保持一致
-    NSString *reloadVersion = [self versionForReloadObject:tableView];
-    [self setVersion:reloadVersion forReloadObject:model];
+    NSUInteger version = [self versionForReloadObject:tableView];
+    [self setVersion:version forReloadObject:model];
 }
 
 // 若 model 中存在一个 tableView 的弱引用，并不能确定 model 已经加入列表，
 // 还需要判断该 model 和 tableView 的version是否一致
 + (UITableView *)tableViewForModel:(NSObject *)model
 {
-    NSString *modelVersion = [self versionForReloadObject:model];
-    if (!model || !modelVersion) {
+    if (!model) {
         return nil;
     }
     TBElementModelWeakWrapper *wrapper = objc_getAssociatedObject(model, _tb_tableViewForModelKey);
     if (!wrapper || !wrapper.data) {
-        [self setVersion:nil forReloadObject:model];
         return nil;
     }
     UITableView *tableView = wrapper.data;
-    NSString *tableVersion = [self versionForReloadObject:tableView];
-    if ([tableVersion isEqualToString:modelVersion]) {
+    NSUInteger tableVersion = [self versionForReloadObject:tableView];
+    NSUInteger modelVersion = [self versionForReloadObject:model];
+    if (tableVersion == modelVersion) {
         return tableView;
     }
-    [self setVersion:nil forReloadObject:model];
     wrapper.data = nil;
     return nil;
 }
@@ -510,23 +508,22 @@ static void *_tb_cellDefaultSelectedColorKey = &_tb_cellDefaultSelectedColorKey;
 
 #pragma mark - - tableView's reload version
 static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
-
-+ (void)setVersion:(id)version forReloadObject:(id)obj
++ (void)setVersion:(NSUInteger)version forReloadObject:(id)obj
 {
-    objc_setAssociatedObject(obj, _tb_tableReloadVersionKey, version, OBJC_ASSOCIATION_COPY_NONATOMIC);
+    objc_setAssociatedObject(obj, _tb_tableReloadVersionKey, @(version), OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 
-+ (NSString *)versionForReloadObject:(NSObject *)obj
++ (NSUInteger)versionForReloadObject:(NSObject *)obj
 {
-    return objc_getAssociatedObject(obj, _tb_tableReloadVersionKey);
+    NSNumber *version = objc_getAssociatedObject(obj, _tb_tableReloadVersionKey);
+    return [version unsignedIntegerValue];
 }
 
 + (void)resetTableViewReloadVersion:(UITableView *)tableView
 {
     if (tableView && [self needResetReloadVersionInTableView:tableView]) {
-        static unsigned long count = 0;
-        NSString *version = [NSString stringWithFormat:@"%lu.%ld", count++, time(NULL) % 100000];
-        [self setVersion:version forReloadObject:tableView];
+        NSUInteger version = [self versionForReloadObject:tableView];
+        [self setVersion:++version forReloadObject:tableView];
     }
 }
 
