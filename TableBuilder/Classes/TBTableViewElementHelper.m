@@ -34,16 +34,22 @@
         }
     }
     
+    if (cellHeight < 0) {
+        NSLog(@"element 高度计算异常，将自动设置为0！");
+        return 0;
+    }
+    
     if (model.tb_tableView.separatorStyle != UITableViewCellSeparatorStyleNone) {
         cellHeight += (1.0 / UIScreen.mainScreen.scale);
     }
+    // 无论是否要求缓存，都将计算出的高度缓存起来，这样就可以通过 model.tb_eleHeight 获取这个高度
+    [self _cacheCalculatedHeight:cellHeight forModel:model];
     return cellHeight;
 }
 
 // 缓存计算出来的cell高度
 static void *_tb_modelCalculatedHeightKey = &_tb_modelCalculatedHeightKey;
-
-+ (void)setCalculatedHeight:(CGFloat)height forModel:(NSObject *)model
++ (void)_cacheCalculatedHeight:(CGFloat)height forModel:(NSObject *)model
 {
     objc_setAssociatedObject(model, _tb_modelCalculatedHeightKey, @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
@@ -70,6 +76,10 @@ static void *_tb_elementModelKey = &_tb_elementModelKey;
     }
     NSObject *prevModel = element.tb_model;
     objc_setAssociatedObject(element, _tb_elementModelKey, model, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    if ([element respondsToSelector:@selector(tb_alwaysPerformWithModel:)]) {
+        [element tb_alwaysPerformWithModel:model];
+    }
     
     // 如果新model和prevModel是同一个model，则根据model的needUpdate标志来确定是否需要更新element。
     // 如果需要更新，则在更新element的同时把model的needUpdate标志置为NO
@@ -607,8 +617,6 @@ static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
     // 创建用于计算高度的 element，这些 element 在计算完高度之后会被释放
     UIView<TBTableViewElement> *elementForCal = [self elementWithModel:model initialElement:element inTableView:tableView];
     CGFloat eleHeight = [self heightWithModel:model forElement:elementForCal];
-    // 无论是否要求缓存，都将计算出的高度缓存起来，这样就可以通过 model.tb_eleHeight 获取这个高度
-    [self setCalculatedHeight:eleHeight forModel:model];
     return eleHeight;
 }
 

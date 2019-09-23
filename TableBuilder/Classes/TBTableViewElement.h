@@ -55,15 +55,27 @@ TBRedefinePropertyType(     \
 // 只用于 UITableViewCell
 @property (nonatomic, copy) UIColor *tb_defaultSelectedColor;
 
+// 子类可以实现该方法用于给element赋值。
+// 需要注意的是：在element上的model未发生改变的情况下，该方法并不会在每次element显示时都会执行。
+// 如果需要在每次element显示时都执行一些操作，你可以实现 tb_alwaysPerformWithModel: 方法。
 - (void)tb_syncSetModel:(NSObject *)model;
 
-// you should override this method if you don't use autolayout
+// 子类可以实现该方法，返回element应该设置成的高度。
+// 如果使用了自动布局且能通过自动布局自动计算出高度，
+// 或者设置了 model 的 tb_eleHeight 或 tb_eleGetHeight 属性，则可以不实现该方法。
+// 需要注意的是：由于高度缓存的存在，并不是每次 element 尝试获取高度的时候都会调用该方法。
 - (CGFloat)tb_elementHeightForModel:(NSObject *)model;
 
-// 在给element正式赋值之前的预操作，此时的model尚未和element关联。
-// 子类可以实现该方法用于优化element异步赋值的视觉体验。
+// 在给element正式赋值前的预操作，子类可以实现该方法用于优化element异步赋值的视觉体验。
 // 为了防止卡顿，建议不要在该方法中进行一些耗时或者过于复杂的操作。
 - (void)tb_preprocessWithModel:(NSObject *)model;
+
+// 每次尝试给element赋值之前都会执行的操作。
+// 子类可以实现该方法用于执行element每次显示时都需要执行的操作。
+// 在该方法中，如果对element的操作不会影响element的高度，则为了防止卡顿，可以异步执行。
+// 如果对element的操作会影响element的高度，则必须同步执行。
+// 同步执行和异步执行的代码在该方法中可以同时存在。
+- (void)tb_alwaysPerformWithModel:(NSObject *)model;
 
 // 只用于 UITableViewCell
 - (void)didSelectCellAtIndexPath:(NSIndexPath *)indexPath;
