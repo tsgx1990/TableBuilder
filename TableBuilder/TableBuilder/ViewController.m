@@ -40,6 +40,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    // self.overrideUserInterfaceStyle = UIUserInterfaceStyleLight;
+    
 //    [self.tableView setEditing:YES animated:YES];
 
     
