@@ -602,7 +602,7 @@ static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
     // 如果不需要刷新高度缓存且 contentWidth 未发生改变，则直接从缓存中获取高度
     if (!needRefreshHeightCache
         && contentWidthObj
-        && fabs(contentWidthObj.floatValue - contentWidth) <= DBL_EPSILON) {
+        && fabs(contentWidthObj.floatValue - contentWidth) <= FLT_EPSILON) {
         return [self calculatedHeigthForModel:model];
     }
     
@@ -713,7 +713,7 @@ static void *_tb_tableReloadVersionKey = &_tb_tableReloadVersionKey;
     }
     
     CGFloat contentWidth = [self contentWidthWithModel:model inTableView:tableView];
-    if (!storeContentWidth || fabs(storeContentWidth.floatValue - contentWidth) > DBL_EPSILON) {
+    if (!storeContentWidth || fabs(storeContentWidth.floatValue - contentWidth) > FLT_EPSILON) {
         shouldUpdate = YES;
         element.contentView.frame = CGRectMake(0, 0, contentWidth, 0);
         CGFloat elementWidth = contentWidth + model.tb_eleHorizontalMargin;
